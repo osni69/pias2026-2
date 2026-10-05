@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <!-- Permite acentos e caracteres especiais. -->
+    <meta charset="UTF-8">
+
+    <!-- Adapta o site para celulares, tablets e computadores. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Texto exibido na aba do navegador. -->
+    <title>EducaSim - Cursos e Oportunidades</title>
+
+    <!-- Conecta o HTML ao arquivo de estilos. -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Avisos que aparecem dentro da página (substituem o alert). -->
+    <div class="avisos" id="avisos" role="status" aria-live="polite"></div>
+
+    <!-- Janela de confirmação usada antes de excluir. -->
+    <dialog class="dialogo" id="dialogoConfirmacao" aria-labelledby="tituloDialogo" aria-describedby="textoDialogo">
+        <h2 id="tituloDialogo"></h2>
+        <p id="textoDialogo"></p>
+        <div class="acoes-dialogo">
+            <button type="button" class="botao-perigo" id="botaoConfirmarExclusao">Sim, excluir</button>
+            <button type="button" class="botao-cancelar-dialogo" id="botaoCancelarExclusao" autofocus>Cancelar</button>
+        </div>
+    </dialog>
+    <!-- Cabeçalho principal do site. -->
+    <header class="cabecalho" id="topo">
+
+        <!--
+            Identificação institucional exigida pelo projeto.
+            O brasão do Governo do Paraná fica à esquerda
+            e o brasão do Colégio Cívico-Militar fica à direita.
+        -->
+        <div class="brasoes-institucionais" aria-label="Identificação institucional">
+            <img
+                class="brasao brasao-governo"
+                src="imagens/governo_estado_sem_fundo.png"
+                alt="Governo do Estado do Paraná"
+            >
+
+            <img
+                class="brasao brasao-colegio"
+                src="imagens/colegio-civico-militar-do-parana-logo.png"
+                alt="Colégio Cívico-Militar do Paraná"
+            >
+        </div>
+
+        <div class="container">
+
+            <!-- Barra de navegação principal. -->
+            <div class="barra-navegacao">
+                <!-- Logo que leva ao topo da página. -->
+                <a class="logo" href="#topo" aria-label="Voltar para o início do EducaSim">
+                    <img
+                        class="logo-imagem"
+                        src="imagens/logo.jpg"
+                        alt="Logo do EducaSim"
+                    >
+                </a>
+
+                <!--
+                    Botão que aparece em telas pequenas.
+                    O JavaScript usará este botão para abrir e fechar o menu.
+                -->
+                <button
+                    type="button"
+                    class="botao-menu"
+                    id="botaoMenu"
+                    aria-label="Abrir menu de navegação"
+                    aria-expanded="false"
+                    aria-controls="menuPrincipal"
+                >
+                    <span class="traco"></span>
+                    <span class="traco"></span>
+                    <span class="traco"></span>
+                </button>
+
+                <!-- Menu principal do site. -->
+                <nav aria-label="Menu principal">
+                    <ul class="menu" id="menuPrincipal">
+                        <li>
+                            <a href="#topo">Início</a>
+                        </li>
+
+                        <li>
+                            <a href="#cursos">Cursos</a>
+                        </li>
+
+                        <li>
+                            <a href="#cadastro-curso">Disponibilizar curso</a>
+                        </li>
+
+                        <li>
+                            <a href="#impacto">Impacto</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Área de destaque do projeto. -->
+            <section class="destaque" id="inicio">
+                <p class="etiqueta-destaque">Educação e oportunidades</p>
+
+                <h1>
+                    Novos caminhos começam com conhecimento
+                </h1>
+
+                <p>
+                    Encontre cursos técnicos e profissionalizantes para desenvolver
+                    novas habilidades e construir seu futuro.
+                </p>
+
+                <a class="botao-destaque" href="#cursos">
+                    Ver cursos disponíveis
+                </a>
+            </section>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal do site. -->
+    <main>
+        <div class="container">
+
+            <!-- Apresentação do projeto. -->
+            <section class="introducao" id="sobre">
+                <p class="etiqueta-secao">Sobre o projeto</p>
+
+                <h2>Educação que abre novas possibilidades</h2>
+
+                <p>
+                    O EducaSim conecta adolescentes e jovens em situação de
+                    vulnerabilidade a cursos técnicos e profissionalizantes.
+                </p>
+
+                <p>
+                    A plataforma aproxima pessoas interessadas em aprender de
+                    instituições que oferecem oportunidades de formação.
+                </p>
+
+                <!-- Objetivos de Desenvolvimento Sustentável. -->
+                <div class="objetivos">
+                    <div class="objetivo">
+                        <strong>ODS 4</strong>
+                        <span>Educação de qualidade</span>
+                    </div>
+
+                    <div class="objetivo">
+                        <strong>ODS 10</strong>
+                        <span>Redução das desigualdades</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Área de cursos disponíveis. -->
+            <section class="secao-cursos" id="cursos">
+                <div class="cabecalho-secao">
+                    <div>
+                        <p class="etiqueta-secao">Oportunidades</p>
+
+                        <h2>Cursos disponíveis</h2>
+
+                        <p>
+                            Escolha uma oportunidade e faça sua inscrição.
+                        </p>
+                    </div>
+
+                    <!-- Campos de busca e filtragem. -->
+                    <div class="filtros-cursos">
+                        <div class="campo-filtro">
+                            <label for="buscaCurso">Buscar curso</label>
+
+                            <input
+                                type="search"
+                                id="buscaCurso"
+                                placeholder="Digite o nome do curso"
+                            >
+                        </div>
+
+                        <div class="campo-filtro">
+                            <label for="filtroCategoria">Categoria</label>
+
+                            <select id="filtroCategoria">
+                                <option value="">Todas as categorias</option>
+                                <option value="Administrativos">Administrativo</option>
+                                <option value="Informáticos">Informático</option>
+                                <option value="Turismo">Turismo</option>
+                                <option value="Saúde">Saúde</option>
+                            </select>
+                        </div>
+
+                        <div class="campo-filtro">
+                            <label for="filtroModalidade">Modalidade</label>
+
+                            <select id="filtroModalidade">
+                                <option value="">Todas as modalidades</option>
+                                <option value="Online">Online</option>
+                                <option value="Híbrido">Híbrido</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O JavaScript colocará os cartões dos cursos nesta área. -->
+                <div id="listaCursos">
+                    <p class="mensagem-vazia">
+                        Nenhum curso disponível no momento.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Formulário para disponibilizar cursos. -->
+            <section class="secao-cadastro" id="cadastro-curso">
+                <p class="etiqueta-secao">Para instituições e parceiros</p>
+
+                <h2 id="tituloFormularioCurso">Disponibilizar um curso</h2>
+
+                <p>
+                    Cadastre uma oportunidade para que ela apareça na lista de cursos.
+                </p>
+
+                <form id="formularioCadastroCurso">
+                    <!-- Preenchido somente quando um curso está sendo editado. -->
+                    <input type="hidden" id="cursoIdEdicao">
+
+                    <!-- Título do curso. -->
+                    <div class="campo">
+                        <label for="tituloCurso">
+                            Título do curso
+                        </label>
+
+                        <input
+                            type="text"
+                            id="tituloCurso"
+                            name="tituloCurso"
+                            placeholder="Exemplo: Curso técnico de informática"
+                            required
+                        >
+                    </div>
+
+                    <!-- Campo para selecionar a imagem do curso. -->
+                    <div class="campo campo-imagem">
+                        <label for="imagemCurso">
+                            Imagem do curso
+                        </label>
+
+                        <input
+                            type="file"
+                            id="imagemCurso"
+                            name="imagemCurso"
+                            accept="image/png, image/jpeg, image/webp"
+                        >
+
+                        <small>
+                            Escolha uma imagem PNG, JPG ou WEBP. Este campo é opcional.
+                        </small>
+
+                        <!-- O JavaScript mostrará a prévia da imagem aqui. -->
+                        <div id="previaImagemCurso"></div>
+                    </div>
+
+                    <!-- Categoria do curso. -->
+                    <div class="campo">
+                        <label for="categoriaCurso">
+                            Categoria
+                        </label>
+
+                        <select id="categoriaCurso" name="categoriaCurso" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="Administrativos">Administrativos</option>
+                            <option value="Informáticos">Informáticos</option>
+                            <option value="Turismo">Turismo</option>
+                            <option value="Saúde">Saúde</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantidade de vagas. -->
+                    <div class="campo">
+                        <label for="vagasCurso">
+                            Vagas por curso
+                        </label>
+
+                        <input
+                            type="number"
+                            id="vagasCurso"
+                            name="vagasCurso"
+                            min="1"
+                            placeholder="Digite a quantidade de vagas"
+                            required
+                        >
+                    </div>
+
+                    <!-- Modalidade do curso. -->
+                    <div class="campo">
+                        <label for="modalidadeCurso">
+                            Modalidade
+                        </label>
+
+                        <select
+                            id="modalidadeCurso"
+                            name="modalidadeCurso"
+                            required
+                        >
+                            <option value="">Selecione uma modalidade</option>
+                            <option value="Online">Online</option>
+                            <option value="Híbrido">Híbrido</option>
+                        </select>
+                    </div>
+
+                    <!-- Descrição do curso. -->
+                    <div class="campo campo-largo">
+                        <label for="descricaoCurso">Descrição do curso</label>
+
+                        <textarea
+                            id="descricaoCurso"
+                            name="descricaoCurso"
+                            rows="3"
+                            maxlength="600"
+                            placeholder="Explique, em poucas linhas, do que se trata o curso"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <!-- Conteúdos aprendidos. -->
+                    <div class="campo campo-largo">
+                        <label for="conteudosCurso">Conteúdos aprendidos</label>
+
+                        <textarea
+                            id="conteudosCurso"
+                            name="conteudosCurso"
+                            rows="4"
+                            placeholder="Escreva um conteúdo por linha"
+                        ></textarea>
+
+                        <small>Escreva um conteúdo por linha. Este campo é opcional.</small>
+                    </div>
+
+                    <!-- Duração do curso. -->
+                    <div class="campo">
+                        <label for="duracaoCurso">Duração</label>
+
+                        <input
+                            type="text"
+                            id="duracaoCurso"
+                            name="duracaoCurso"
+                            maxlength="80"
+                            placeholder="[informe a duração]"
+                        >
+                    </div>
+
+                    <!-- Requisitos do curso. -->
+                    <div class="campo">
+                        <label for="requisitosCurso">Requisitos</label>
+
+                        <input
+                            type="text"
+                            id="requisitosCurso"
+                            name="requisitosCurso"
+                            maxlength="200"
+                            placeholder="[informe os requisitos]"
+                        >
+                    </div>
+
+                    <!-- Local ou link das aulas. -->
+                    <div class="campo campo-largo">
+                        <label for="localCurso">Local ou link das aulas</label>
+
+                        <input
+                            type="text"
+                            id="localCurso"
+                            name="localCurso"
+                            maxlength="200"
+                            placeholder="[informe o local ou link]"
+                        >
+                    </div>
+
+                    <!-- Botões do cadastro e da edição do curso. -->
+                    <div class="acoes-formulario">
+                        <button type="submit" id="botaoSalvarCurso">
+                            Disponibilizar curso
+                        </button>
+
+                        <button
+                            type="button"
+                            class="botao-secundario"
+                            id="botaoCancelarEdicao"
+                            hidden
+                        >
+                            Cancelar edição
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Formulário de inscrição do estudante. -->
+            <section
+                class="secao-inscricao"
+                id="area-inscricao"
+                hidden
+            >
+                <p class="etiqueta-secao">Inscrição</p>
+
+                <h2>Inscreva-se em um curso</h2>
+
+                <!-- O JavaScript mostrará aqui o curso escolhido. -->
+                <div id="cursoSelecionado"></div>
+
+                <form id="formularioInscricao">
+                    <!-- Guarda o identificador do curso escolhido. -->
+                    <input type="hidden" id="cursoIdInscricao">
+
+                    <!-- Nome completo do participante. -->
+                    <div class="campo">
+                        <label for="nomeCompleto">Nome completo</label>
+
+                        <input
+                            type="text"
+                            id="nomeCompleto"
+                            name="nomeCompleto"
+                            placeholder="Digite seu nome completo"
+                            required
+                        >
+                    </div>
+
+                    <!-- Data de nascimento. -->
+                    <div class="campo">
+                        <label for="dataNascimento">Data de nascimento</label>
+
+                        <input
+                            type="date"
+                            id="dataNascimento"
+                            name="dataNascimento"
+                            required
+                        >
+                    </div>
+
+                    <!-- E-mail do participante. -->
+                    <div class="campo">
+                        <label for="emailInscricao">E-mail</label>
+
+                        <input
+                            type="email"
+                            id="emailInscricao"
+                            name="emailInscricao"
+                            placeholder="exemplo@email.com"
+                            required
+                        >
+                    </div>
+
+                    <!-- Telefone do participante. -->
+                    <div class="campo">
+                        <label for="telefoneInscricao">Telefone</label>
+
+                        <input
+                            type="tel"
+                            id="telefoneInscricao"
+                            name="telefoneInscricao"
+                            placeholder="Digite seu telefone"
+                            required
+                        >
+                    </div>
+
+                    <!-- Cidade do participante. -->
+                    <div class="campo">
+                        <label for="cidadeInscricao">Cidade</label>
+
+                        <input
+                            type="text"
+                            id="cidadeInscricao"
+                            name="cidadeInscricao"
+                            placeholder="Digite sua cidade"
+                            required
+                        >
+                    </div>
+
+                    <!-- Escolaridade do participante. -->
+                    <div class="campo">
+                        <label for="escolaridadeInscricao">Escolaridade</label>
+
+                        <select
+                            id="escolaridadeInscricao"
+                            name="escolaridadeInscricao"
+                            required
+                        >
+                            <option value="">Selecione sua escolaridade</option>
+                            <option value="Ensino fundamental">Ensino fundamental</option>
+                            <option value="Ensino médio incompleto">Ensino médio incompleto</option>
+                            <option value="Ensino médio completo">Ensino médio completo</option>
+                            <option value="Ensino técnico">Ensino técnico</option>
+                            <option value="Ensino superior">Ensino superior</option>
+                        </select>
+                    </div>
+
+                    <!-- Aceite do participante. -->
+                    <div class="campo campo-checkbox">
+                        <label>
+                            <input
+                                type="checkbox"
+                                id="aceiteInscricao"
+                                name="aceiteInscricao"
+                                required
+                            >
+
+                            Confirmo que as informações preenchidas são verdadeiras
+                            e quero me inscrever neste curso.
+                        </label>
+                    </div>
+
+                    <!-- Botões da inscrição. -->
+                    <div class="acoes-formulario">
+                        <button type="submit">
+                            Confirmar inscrição
+                        </button>
+
+                        <button
+                            type="button"
+                            class="botao-secundario"
+                            id="botaoCancelarInscricao"
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Lista de inscrições realizadas neste navegador. -->
+            <section
+                class="secao-minhas-inscricoes"
+                id="minhas-inscricoes"
+            >
+                <p class="etiqueta-secao">Acompanhamento</p>
+
+                <h2>Inscrições realizadas neste navegador</h2>
+
+                <p>
+                    Esta área mostra as inscrições salvas neste dispositivo.
+                </p>
+
+                <!-- O JavaScript mostrará as inscrições nesta área. -->
+                <div id="listaInscricoes">
+                    <p class="mensagem-vazia">
+                        Nenhuma inscrição realizada ainda.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Indicadores do projeto. -->
+            <section class="impacto" id="impacto">
+                <p class="etiqueta-secao">Acompanhamento do projeto</p>
+
+                <h2>Indicadores de impacto</h2>
+
+                <div class="indicadores">
+                    <div class="indicador">
+                        <strong id="indicadorCursos">0</strong>
+                        <span>Cursos disponíveis</span>
+                    </div>
+
+                    <div class="indicador">
+                        <strong id="indicadorVagas">0</strong>
+                        <span>Vagas disponíveis</span>
+                    </div>
+
+                    <div class="indicador">
+                        <strong id="indicadorInscricoes">0</strong>
+                        <span>Inscrições realizadas</span>
+                    </div>
+
+                    <div class="indicador">
+                        <strong id="indicadorCadastros">0</strong>
+                        <span>Cadastros em 8 semanas</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Rodapé do site. -->
+<footer class="rodape">
+    <div class="container rodape-conteudo">
+
+        <div class="rodape-marca">
+            <strong>EducaSim</strong>
+            <small>Pequenas empresas, grandes impactos.</small>
+        </div>
+
+        <nav class="rodape-links" aria-label="Links do rodapé">
+            <a href="#inicio">Início</a>
+            <a href="#sobre">Sobre nós</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="rodape-contato">
+            <strong>Fale conosco</strong>
+
+            <a
+                href="https://wa.me/554599526372"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                WhatsApp: (45 ) 99952-6372
+            </a>
+
+            <a href="tel:+554599526372">
+                Telefone: (45) 99952-6372
+            </a>
+
+            <a href="mailto:contato@educasim.com.br">
+                E-mail: contato@gmail.com
+            </a>
+        </div>
+
+        <img src="imagens/logo.png" alt="Logo da EducaSim">
+
+    </div>
+
+    <div class="rodape-final">
+        <small>&copy; 2026 EducaSim. Todos os direitos reservados.</small>
+
+        <div>
+            <a href="#privacidade">Política de privacidade</a>
+            <a href="#termos">Termos de uso</a>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- Conecta o HTML ao JavaScript. -->
+    <script src="script.js"></script>
+</body>
+
+</html>
