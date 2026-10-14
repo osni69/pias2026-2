@@ -1788,3 +1788,815 @@ select:focus-visible {
         top: 62px;
     }
 }
+
+
+/* ==================================================
+   PAINEL ANIMADO DO CADASTRO DE CURSO
+   Adaptação da referência brutalista à identidade do EducaSim.
+   ================================================== */
+.cadastro-painel {
+    position: relative;
+    isolation: isolate;
+    margin-top: 24px;
+    padding: clamp(24px, 4vw, 42px);
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(8, 45, 40, 0.98), rgba(13, 64, 56, 0.97)),
+        var(--verde-950);
+    border: 7px solid var(--verde-950);
+    border-radius: 4px;
+    box-shadow:
+        10px 10px 0 rgba(8, 45, 40, 0.55),
+        20px 20px 0 rgba(8, 45, 40, 0.22);
+    transition:
+        transform 0.6s cubic-bezier(0.19, 1, 0.22, 1),
+        box-shadow 0.6s cubic-bezier(0.19, 1, 0.22, 1),
+        border-color 0.4s ease;
+}
+
+.cadastro-painel:hover,
+.cadastro-painel:focus-within {
+    transform: translate(-3px, -3px);
+    border-color: var(--amarelo-500);
+    box-shadow:
+        14px 14px 0 rgba(8, 45, 40, 0.6),
+        28px 28px 0 rgba(8, 45, 40, 0.24);
+}
+
+.cadastro-textura {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+        repeating-linear-gradient(45deg, transparent 0 2px, rgba(255, 255, 255, 0.035) 2px 4px),
+        repeating-linear-gradient(-45deg, transparent 0 8px, rgba(243, 189, 36, 0.06) 8px 10px);
+    opacity: 0.65;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.cadastro-painel:hover .cadastro-textura,
+.cadastro-painel:focus-within .cadastro-textura {
+    opacity: 1;
+}
+
+.cadastro-type-accent {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    color: var(--verde-900);
+    font-family: "Courier New", monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.cadastro-painel:hover .cadastro-type-accent,
+.cadastro-painel:focus-within .cadastro-type-accent {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cadastro-cabecalho {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 26px;
+}
+
+.cadastro-cabecalho .etiqueta-secao {
+    display: inline-flex;
+    padding: 6px 11px;
+    border: 1px solid rgba(243, 189, 36, 0.7);
+    border-radius: 999px;
+    background: rgba(243, 189, 36, 0.13);
+}
+
+.cadastro-cabecalho h2 {
+    color: var(--branco) !important;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.28);
+}
+
+.cadastro-cabecalho > p:last-child {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.cadastro-formulario-superficie {
+    position: relative;
+    z-index: 2;
+    padding: clamp(18px, 3vw, 30px);
+    background: rgba(255, 255, 255, 0.97);
+    border: 4px solid var(--amarelo-500);
+    border-radius: 2px;
+    box-shadow:
+        7px 7px 0 rgba(0, 0, 0, 0.27),
+        inset 0 0 0 1px rgba(8, 45, 40, 0.1);
+    transform: translateZ(0);
+    transition: box-shadow 0.6s cubic-bezier(0.19, 1, 0.22, 1), transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cadastro-painel:hover .cadastro-formulario-superficie,
+.cadastro-painel:focus-within .cadastro-formulario-superficie {
+    transform: translate(2px, 2px);
+    box-shadow:
+        10px 10px 0 rgba(0, 0, 0, 0.3),
+        inset 0 0 0 1px rgba(8, 45, 40, 0.1);
+}
+
+.cadastro-formulario-superficie form {
+    position: relative;
+    z-index: 2;
+}
+
+.cadastro-formulario-superficie .campo {
+    animation: cadastro-campo-entrada 0.55s both;
+}
+
+.cadastro-formulario-superficie .campo:nth-of-type(2) { animation-delay: 0.03s; }
+.cadastro-formulario-superficie .campo:nth-of-type(3) { animation-delay: 0.06s; }
+.cadastro-formulario-superficie .campo:nth-of-type(4) { animation-delay: 0.09s; }
+.cadastro-formulario-superficie .campo:nth-of-type(5) { animation-delay: 0.12s; }
+.cadastro-formulario-superficie .campo:nth-of-type(6) { animation-delay: 0.15s; }
+
+.cadastro-formulario-superficie .campo label {
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+}
+
+.cadastro-formulario-superficie .campo input:not([type="checkbox"]),
+.cadastro-formulario-superficie .campo select,
+.cadastro-formulario-superficie .campo textarea {
+    border-radius: 2px;
+    border-width: 2px;
+}
+
+.cadastro-formulario-superficie .campo input:not([type="checkbox"]):focus,
+.cadastro-formulario-superficie .campo select:focus,
+.cadastro-formulario-superficie .campo textarea:focus {
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 rgba(8, 45, 40, 0.22), 0 0 0 3px rgba(243, 189, 36, 0.28);
+}
+
+.cadastro-formulario-superficie form button {
+    border-radius: 2px;
+    box-shadow: 4px 4px 0 var(--amarelo-500);
+}
+
+.cadastro-formulario-superficie form button:hover {
+    box-shadow: 6px 6px 0 var(--amarelo-500);
+}
+
+.cadastro-bracket {
+    position: absolute;
+    z-index: 4;
+    width: 22px;
+    height: 22px;
+    border: 4px solid var(--amarelo-500);
+    background: var(--branco);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), background 0.4s ease;
+}
+
+.cadastro-bracket-tl { top: -12px; left: -12px; border-right: 0; border-bottom: 0; }
+.cadastro-bracket-tr { top: -12px; right: -12px; border-left: 0; border-bottom: 0; }
+.cadastro-bracket-bl { bottom: -12px; left: -12px; border-right: 0; border-top: 0; }
+.cadastro-bracket-br { right: -12px; bottom: -12px; border-left: 0; border-top: 0; }
+
+.cadastro-painel:hover .cadastro-bracket,
+.cadastro-painel:focus-within .cadastro-bracket {
+    background: var(--verde-950);
+    transform: scale(1.35);
+}
+
+.cadastro-rivet {
+    position: absolute;
+    z-index: 4;
+    width: 9px;
+    height: 9px;
+    border: 2px solid var(--verde-950);
+    border-radius: 50%;
+    background: var(--amarelo-500);
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.cadastro-rivet-1 { top: 12px; left: 12px; }
+.cadastro-rivet-2 { top: 12px; right: 12px; }
+.cadastro-rivet-3 { bottom: 12px; left: 12px; }
+.cadastro-rivet-4 { right: 12px; bottom: 12px; }
+
+.cadastro-painel:hover .cadastro-rivet,
+.cadastro-painel:focus-within .cadastro-rivet {
+    background: var(--branco);
+    transform: scale(1.45);
+}
+
+.cadastro-scan {
+    position: absolute;
+    top: 0;
+    left: -15%;
+    z-index: 3;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, var(--amarelo-500), transparent);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cadastro-painel:hover .cadastro-scan,
+.cadastro-painel:focus-within .cadastro-scan {
+    opacity: 0.85;
+    animation: cadastro-scan 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes cadastro-scan {
+    from { left: -15%; }
+    to { left: 115%; }
+}
+
+@keyframes cadastro-campo-entrada {
+    from { opacity: 0.72; transform: translateY(7px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .cadastro-painel {
+        margin-right: 4px;
+        margin-bottom: 8px;
+        padding: 22px 14px;
+        border-width: 5px;
+        box-shadow: 7px 7px 0 rgba(8, 45, 40, 0.5);
+    }
+
+    .cadastro-formulario-superficie {
+        padding: 15px 12px;
+        border-width: 3px;
+        box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.27);
+    }
+
+    .cadastro-painel:hover,
+    .cadastro-painel:focus-within {
+        transform: translate(-1px, -1px);
+        box-shadow: 8px 8px 0 rgba(8, 45, 40, 0.55);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cadastro-formulario-superficie .campo {
+        animation: none;
+    }
+
+    .cadastro-scan {
+        display: none;
+    }
+}
+
+
+/* ==================================================
+   ESTADO RECOLHIDO DO FORMULÁRIO
+   Desktop: abre com hover/foco. Celular: abre pelo botão.
+   ================================================== */
+.cadastro-toggle {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 54px;
+    margin-top: 10px;
+    padding: 12px 16px;
+    border: 2px solid var(--amarelo-500);
+    border-radius: 2px;
+    background: rgba(243, 189, 36, 0.12);
+    color: var(--branco);
+    font-family: "Courier New", monospace;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-align: left;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+.cadastro-toggle:hover,
+.cadastro-toggle:focus-visible {
+    background: var(--amarelo-500);
+    color: var(--verde-950);
+    transform: translate(-2px, -2px);
+}
+
+.cadastro-toggle-icon {
+    display: inline-grid;
+    width: 25px;
+    height: 25px;
+    place-items: center;
+    border: 1px solid currentColor;
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: transform 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.cadastro-painel.aberto .cadastro-toggle-icon {
+    transform: rotate(45deg);
+}
+
+.cadastro-formulario-superficie {
+    max-height: 0;
+    margin-top: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-16px) scale(0.985);
+    transition:
+        max-height 0.7s cubic-bezier(0.19, 1, 0.22, 1),
+        margin-top 0.6s ease,
+        padding-top 0.6s ease,
+        padding-bottom 0.6s ease,
+        opacity 0.35s ease,
+        transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@media (min-width: 701px) {
+    .cadastro-painel:hover .cadastro-formulario-superficie,
+    .cadastro-painel:focus-within .cadastro-formulario-superficie,
+    .cadastro-painel.aberto .cadastro-formulario-superficie {
+        max-height: 1900px;
+        margin-top: 18px;
+        padding-top: clamp(18px, 3vw, 30px);
+        padding-bottom: clamp(18px, 3vw, 30px);
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(2px, 2px) scale(1);
+    }
+}
+
+@media (max-width: 700px) {
+    .cadastro-formulario-superficie {
+        max-height: 0;
+    }
+
+    .cadastro-painel.aberto .cadastro-formulario-superficie {
+        max-height: 2200px;
+        margin-top: 18px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+
+/* ==================================================
+   AJUSTE FINAL DE IDENTIDADE EDUCASIM
+   Bordas arredondadas, sombras suaves e fechamento explícito.
+   ================================================== */
+.cadastro-painel {
+    border: 2px solid rgba(243, 189, 36, 0.8);
+    border-radius: var(--raio-lg);
+    box-shadow: var(--sombra-media);
+}
+
+.cadastro-painel:hover,
+.cadastro-painel:focus-within {
+    border-color: var(--amarelo-500);
+    box-shadow: 0 20px 42px rgba(8, 45, 40, 0.25);
+}
+
+.cadastro-formulario-superficie {
+    border: 1px solid var(--borda);
+    border-radius: var(--raio-md);
+    box-shadow: var(--sombra-suave);
+}
+
+.cadastro-toggle {
+    border-radius: var(--raio-sm);
+    box-shadow: none;
+}
+
+.cadastro-toggle:hover,
+.cadastro-toggle:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(8, 45, 40, 0.16);
+}
+
+.cadastro-formulario-superficie form button {
+    border-radius: var(--raio-sm);
+    box-shadow: none;
+}
+
+.cadastro-formulario-superficie form button:hover {
+    box-shadow: var(--sombra-suave);
+}
+
+.cadastro-formulario-superficie .campo input:not([type="checkbox"]),
+.cadastro-formulario-superficie .campo select,
+.cadastro-formulario-superficie .campo textarea {
+    border-radius: var(--raio-sm);
+}
+
+.cadastro-formulario-superficie .campo input:not([type="checkbox"]):focus,
+.cadastro-formulario-superficie .campo select:focus,
+.cadastro-formulario-superficie .campo textarea:focus {
+    transform: none;
+    box-shadow: 0 0 0 4px rgba(243, 189, 36, 0.28);
+}
+
+.cadastro-bracket {
+    width: 16px;
+    height: 16px;
+    border-width: 3px;
+    border-radius: 5px;
+    background: transparent;
+}
+
+.cadastro-bracket-tl,
+.cadastro-bracket-tr,
+.cadastro-bracket-bl,
+.cadastro-bracket-br {
+    border: 0;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 2px rgba(243, 189, 36, 0.55);
+}
+
+.cadastro-bracket-tl { top: 10px; left: 10px; }
+.cadastro-bracket-tr { top: 10px; right: 10px; }
+.cadastro-bracket-bl { bottom: 10px; left: 10px; }
+.cadastro-bracket-br { right: 10px; bottom: 10px; }
+
+.cadastro-painel:hover .cadastro-bracket,
+.cadastro-painel:focus-within .cadastro-bracket {
+    background: var(--amarelo-500);
+    transform: scale(1.12);
+}
+
+.cadastro-rivet {
+    width: 7px;
+    height: 7px;
+    border: 0;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* O clique em Fechar tem prioridade sobre o hover do mouse. */
+.cadastro-painel.fechado .cadastro-formulario-superficie {
+    max-height: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-16px) scale(0.985) !important;
+}
+
+@media (max-width: 600px) {
+    .cadastro-painel {
+        border-radius: var(--raio-md);
+        box-shadow: var(--sombra-media);
+    }
+
+    .cadastro-formulario-superficie {
+        border-radius: var(--raio-sm);
+    }
+}
+
+
+/* ==================================================
+   ACABAMENTO VISUAL FINAL DO EDUCASIM
+   Mantém a animação, mas usa o mesmo cartão claro da página.
+   ================================================== */
+.cadastro-painel {
+    background:
+        radial-gradient(circle at 92% 8%, rgba(243, 189, 36, 0.16), transparent 15rem),
+        linear-gradient(135deg, var(--verde-50), var(--branco));
+    border: 1px solid var(--borda);
+    border-top: 5px solid var(--verde-900);
+    color: var(--texto);
+    box-shadow: var(--sombra-media);
+}
+
+.cadastro-painel:hover,
+.cadastro-painel:focus-within {
+    border-color: var(--borda-forte);
+    border-top-color: var(--amarelo-500);
+    box-shadow: 0 20px 42px rgba(8, 45, 40, 0.18);
+}
+
+.cadastro-textura {
+    background:
+        repeating-linear-gradient(45deg, transparent 0 3px, rgba(18, 89, 77, 0.025) 3px 5px),
+        radial-gradient(circle at 80% 20%, rgba(243, 189, 36, 0.08), transparent 17rem);
+    opacity: 1;
+}
+
+.cadastro-cabecalho h2 {
+    color: var(--verde-950) !important;
+    text-shadow: none;
+}
+
+.cadastro-cabecalho > p:last-child {
+    color: var(--texto-suave) !important;
+}
+
+.cadastro-type-accent {
+    color: var(--verde-700);
+}
+
+.cadastro-toggle {
+    background: var(--verde-900);
+    color: var(--branco);
+}
+
+.cadastro-toggle:hover,
+.cadastro-toggle:focus-visible {
+    background: var(--amarelo-500);
+    color: var(--verde-950);
+}
+
+.cadastro-bracket-tl,
+.cadastro-bracket-tr,
+.cadastro-bracket-bl,
+.cadastro-bracket-br {
+    background: var(--branco);
+    box-shadow: 0 0 0 2px rgba(23, 117, 101, 0.25);
+}
+
+.cadastro-painel:hover .cadastro-bracket,
+.cadastro-painel:focus-within .cadastro-bracket {
+    background: var(--amarelo-500);
+}
+
+.cadastro-rivet {
+    background: var(--verde-700);
+}
+
+.cadastro-painel:hover .cadastro-rivet,
+.cadastro-painel:focus-within .cadastro-rivet {
+    background: var(--amarelo-500);
+}
+
+
+/* ==================================================
+   CONTROLE EXCLUSIVO PELO BOTÃO
+   O formulário não abre mais com hover ou foco no painel.
+   ================================================== */
+.cadastro-painel:not(.aberto) .cadastro-formulario-superficie {
+    max-height: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(-16px) scale(0.985) !important;
+}
+
+.cadastro-painel.aberto .cadastro-formulario-superficie {
+    max-height: 2200px !important;
+    margin-top: 18px !important;
+    padding-top: clamp(18px, 3vw, 30px) !important;
+    padding-bottom: clamp(18px, 3vw, 30px) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translate(0, 0) scale(1) !important;
+}
+
+.cadastro-painel:hover,
+.cadastro-painel:focus-within {
+    transform: none;
+}
+
+.cadastro-painel:hover .cadastro-scan,
+.cadastro-painel:focus-within .cadastro-scan {
+    animation: none;
+    opacity: 0;
+}
+
+
+/* ==================================================
+   ANIMAÇÃO DA PRÉVIA DA IMAGEM
+   ================================================== */
+#previaImagemCurso {
+    overflow: hidden;
+    border-radius: var(--raio-md);
+}
+
+#previaImagemCurso img {
+    animation: aparecer-previa 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    border-radius: var(--raio-md);
+    transform-origin: center;
+}
+
+#previaImagemCurso img:hover {
+    transform: scale(1.025);
+    transition: transform var(--transicao), box-shadow var(--transicao);
+    box-shadow: var(--sombra-media);
+}
+
+@keyframes aparecer-previa {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ==================================================
+   NAVEGAÇÃO REFINADA
+   Sublinhado animado e seção ativa.
+   ================================================== */
+.menu a {
+    position: relative;
+    transition:
+        background-color var(--transicao),
+        border-color var(--transicao),
+        color var(--transicao),
+        transform var(--transicao);
+}
+
+.menu a::after {
+    position: absolute;
+    right: 13px;
+    bottom: 4px;
+    left: 13px;
+    height: 2px;
+    border-radius: 999px;
+    background-color: var(--amarelo-500);
+    content: "";
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.menu a:hover,
+.menu a.ativo {
+    color: var(--amarelo-500);
+}
+
+.menu a:hover::after,
+.menu a.ativo::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.menu a:hover {
+    transform: translateY(-1px);
+}
+
+.barra-navegacao {
+    will-change: min-height, padding, background-color, box-shadow;
+}
+
+@media (max-width: 600px) {
+    .menu a::after {
+        right: 12px;
+        bottom: 6px;
+        left: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #previaImagemCurso img,
+    .menu a,
+    .menu a::after {
+        animation: none;
+        transition: none;
+    }
+}
+
+
+/* ==================================================
+   FILTROS DE CURSOS
+   Atualização suave da lista e destaque do filtro ativo.
+   ================================================== */
+.campo-filtro {
+    transition: transform var(--transicao), opacity var(--transicao);
+}
+
+.campo-filtro.ativo {
+    transform: translateY(-2px);
+}
+
+.campo-filtro.ativo label {
+    color: var(--verde-700);
+}
+
+.campo-filtro.ativo input,
+.campo-filtro.ativo select {
+    background-color: var(--verde-50);
+    border-color: var(--verde-700);
+    box-shadow: 0 0 0 4px rgba(243, 189, 36, 0.2);
+}
+
+.filtros-cursos.filtro-ativo {
+    position: relative;
+}
+
+.filtros-cursos.filtro-ativo::after {
+    display: block;
+    grid-column: 1 / -1;
+    color: var(--verde-700);
+    content: "Filtros aplicados";
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    opacity: 0;
+    animation: aviso-filtro 0.45s ease forwards;
+}
+
+#listaCursos.atualizando {
+    animation: atualizar-lista-cursos 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+#listaCursos.atualizando .cartao-curso,
+#listaCursos.atualizando .mensagem-vazia {
+    animation: surgir-resultado-filtro 0.46s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes atualizar-lista-cursos {
+    0% {
+        opacity: 0.42;
+        transform: translateY(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes surgir-resultado-filtro {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes aviso-filtro {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .filtros-cursos.filtro-ativo::after {
+        margin-top: 2px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .campo-filtro,
+    #listaCursos.atualizando,
+    #listaCursos.atualizando .cartao-curso,
+    #listaCursos.atualizando .mensagem-vazia,
+    .filtros-cursos.filtro-ativo::after {
+        animation: none;
+        transition: none;
+    }
+}
+
+
+/* ==================================================
+   CARTÕES INDEPENDENTES
+   Cada cartão cresce sozinho ao abrir seus detalhes.
+   ================================================== */
+#listaCursos {
+    align-items: start;
+}
+
+.cartao-curso {
+    align-self: start;
+    min-height: 0;
+    height: fit-content;
+}
+
+
+/* ==================================================
+   IMAGENS TEMÁTICAS DOS CARTÕES
+   ================================================== */
+.imagem-cartao-curso {
+    display: block;
+    background-color: var(--verde-50);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.45s ease;
+}
+
+.cartao-curso:hover .imagem-cartao-curso {
+    filter: saturate(1.08);
+    transform: scale(1.025);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .imagem-cartao-curso {
+        transition: none;
+    }
+}

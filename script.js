@@ -5,6 +5,13 @@
 // Chaves usadas para guardar os dados no localStorage.
 const CHAVE_CURSOS = "educasim_cursos";
 const CHAVE_INSCRICOES = "educasim_inscricoes";
+const CHAVE_EXEMPLOS_CURSOS = "educasim_exemplos_cursos_v1";
+const IMAGENS_CURSOS_DEMONSTRATIVOS = {
+    "exemplo-informatica": "imagens/cursos/informatica.svg",
+    "exemplo-administrativo": "imagens/cursos/administrativo.svg",
+    "exemplo-turismo": "imagens/cursos/turismo.svg",
+    "exemplo-saude": "imagens/cursos/saude.svg"
+};
 
 // Elementos da navegação mobile.
 const botaoMenu = document.getElementById("botaoMenu");
@@ -493,7 +500,41 @@ function criarCartaoCurso(curso) {
    Exibe os cursos conforme a pesquisa do visitante.
    ================================================== */
 
-function mostrarCursos() {
+function atualizarEstadoFiltros() {
+    const filtros = [
+        { elemento: buscaCurso, wrapper: buscaCurso.closest(".campo-filtro") },
+        { elemento: filtroCategoria, wrapper: filtroCategoria.closest(".campo-filtro") },
+        { elemento: filtroModalidade, wrapper: filtroModalidade.closest(".campo-filtro") }
+    ];
+
+    let existeFiltroAtivo = false;
+
+    filtros.forEach(function(filtro) {
+        const ativo = Boolean(filtro.elemento.value.trim());
+        filtro.wrapper.classList.toggle("ativo", ativo);
+        existeFiltroAtivo = existeFiltroAtivo || ativo;
+    });
+
+    document.querySelector(".filtros-cursos").classList.toggle("filtro-ativo", existeFiltroAtivo);
+}
+
+function animarAtualizacaoDaLista() {
+    listaCursos.classList.remove("atualizando");
+    void listaCursos.offsetWidth;
+    listaCursos.classList.add("atualizando");
+
+    window.setTimeout(function() {
+        listaCursos.classList.remove("atualizando");
+    }, 460);
+}
+
+function mostrarCursos(animarLista) {
+    atualizarEstadoFiltros();
+
+    if (animarLista === true) {
+        animarAtualizacaoDaLista();
+    }
+
     const cursos = lerCursos();
     const textoBusca = buscaCurso.value.trim().toLowerCase();
     const categoriaEscolhida = filtroCategoria.value;
@@ -527,9 +568,18 @@ function mostrarCursos() {
     atualizarIndicadores();
 }
 
-buscaCurso.addEventListener("input", mostrarCursos);
-filtroCategoria.addEventListener("change", mostrarCursos);
-filtroModalidade.addEventListener("change", mostrarCursos);
+buscaCurso.addEventListener("input", function() {
+    // A busca atualiza imediatamente, sem reiniciar a animação a cada tecla.
+    mostrarCursos(false);
+});
+
+filtroCategoria.addEventListener("change", function() {
+    mostrarCursos(true);
+});
+
+filtroModalidade.addEventListener("change", function() {
+    mostrarCursos(true);
+});
 
 
 /* ==================================================
@@ -953,10 +1003,190 @@ function atualizarIndicadores() {
 
 
 /* ==================================================
+   CURSOS DEMONSTRATIVOS
+   Aparecem apenas no primeiro carregamento e não sobrescrevem cadastros reais.
+   ================================================== */
+function inserirCursosDemonstrativos() {
+    if (localStorage.getItem(CHAVE_EXEMPLOS_CURSOS)) {
+        return;
+    }
+
+    const cursosExistentes = lerCursos();
+
+    if (cursosExistentes.length === 0) {
+        const agora = new Date().toISOString();
+        const cursosDemonstrativos = [
+            {
+                id: "exemplo-informatica",
+                titulo: "Introdução à Informática",
+                categoria: "Informáticos",
+                vagas: 20,
+                modalidade: "Online",
+                descricao: "Aprenda os fundamentos do computador, internet, editores de texto e ferramentas digitais para o dia a dia.",
+                conteudos: ["Uso do computador", "Internet e segurança digital", "Editores de texto", "E-mail e ferramentas online"],
+                duracao: "40 horas",
+                requisitos: "Conhecimentos básicos de leitura",
+                local: "Aulas online",
+                imagem: "imagens/cursos/informatica.svg",
+                data: agora
+            },
+            {
+                id: "exemplo-administrativo",
+                titulo: "Auxiliar Administrativo",
+                categoria: "Administrativos",
+                vagas: 15,
+                modalidade: "Híbrido",
+                descricao: "Desenvolva habilidades de organização, atendimento, comunicação profissional e rotina de escritório.",
+                conteudos: ["Organização de documentos", "Atendimento ao público", "Comunicação profissional", "Rotinas administrativas"],
+                duracao: "60 horas",
+                requisitos: "A partir de 14 anos",
+                local: "Centro de formação EducaSim",
+                imagem: "imagens/cursos/administrativo.svg",
+                data: agora
+            },
+            {
+                id: "exemplo-turismo",
+                titulo: "Atendimento e Turismo Local",
+                categoria: "Turismo",
+                vagas: 18,
+                modalidade: "Online",
+                descricao: "Conheça práticas de atendimento, hospitalidade e divulgação das atrações turísticas da sua região.",
+                conteudos: ["Hospitalidade", "Atendimento ao visitante", "Cultura e turismo local", "Divulgação de destinos"],
+                duracao: "32 horas",
+                requisitos: "Interesse em turismo e cultura",
+                local: "Aulas online",
+                imagem: "imagens/cursos/turismo.svg",
+                data: agora
+            },
+            {
+                id: "exemplo-saude",
+                titulo: "Primeiros Cuidados em Saúde",
+                categoria: "Saúde",
+                vagas: 12,
+                modalidade: "Híbrido",
+                descricao: "Aprenda noções de prevenção, autocuidado e primeiros cuidados em situações do cotidiano.",
+                conteudos: ["Prevenção de acidentes", "Sinais de alerta", "Noções de primeiros cuidados", "Autocuidado e bem-estar"],
+                duracao: "24 horas",
+                requisitos: "A partir de 14 anos",
+                local: "Unidade parceira EducaSim",
+                imagem: "imagens/cursos/saude.svg",
+                data: agora
+            }
+        ];
+
+        gravarCursos(cursosDemonstrativos);
+    }
+
+    localStorage.setItem(CHAVE_EXEMPLOS_CURSOS, "true");
+}
+
+function atualizarImagensDosExemplos() {
+    const cursos = lerCursos();
+    let alterou = false;
+
+    const cursosAtualizados = cursos.map(function(curso) {
+        const imagem = IMAGENS_CURSOS_DEMONSTRATIVOS[curso.id];
+
+        if (imagem && !curso.imagem) {
+            alterou = true;
+            return Object.assign({}, curso, { imagem: imagem });
+        }
+
+        return curso;
+    });
+
+    if (alterou) {
+        gravarCursos(cursosAtualizados);
+    }
+}
+
+/* ==================================================
    INICIALIZAÇÃO
    Carrega cursos, inscrições e indicadores ao abrir a página.
    ================================================== */
 
+inserirCursosDemonstrativos();
+atualizarImagensDosExemplos();
 mostrarCursos();
 mostrarInscricoes();
 atualizarIndicadores();
+
+
+/* ==================================================
+   ABERTURA DO FORMULÁRIO ANIMADO
+   No desktop o CSS responde ao hover/foco; no celular o botão controla o painel.
+   ================================================== */
+const botaoAbrirCadastro = document.getElementById("botaoAbrirCadastro");
+const painelCadastro = document.querySelector(".cadastro-painel");
+
+
+/* Garante que o fechamento manual prevaleça enquanto o cursor permanece no painel. */
+if (botaoAbrirCadastro && painelCadastro) {
+    botaoAbrirCadastro.addEventListener("click", function() {
+        const estaAberto = painelCadastro.classList.contains("aberto");
+
+        if (estaAberto) {
+            painelCadastro.classList.remove("aberto");
+            painelCadastro.classList.add("fechado");
+            botaoAbrirCadastro.setAttribute("aria-expanded", "false");
+            botaoAbrirCadastro.querySelector(".cadastro-toggle-label").textContent = "Abrir formulário";
+            botaoAbrirCadastro.querySelector(".cadastro-toggle-icon").textContent = "＋";
+        } else {
+            painelCadastro.classList.remove("fechado");
+            painelCadastro.classList.add("aberto");
+            botaoAbrirCadastro.setAttribute("aria-expanded", "true");
+            botaoAbrirCadastro.querySelector(".cadastro-toggle-label").textContent = "Fechar formulário";
+            botaoAbrirCadastro.querySelector(".cadastro-toggle-icon").textContent = "×";
+        }
+    });
+}
+
+
+/* ==================================================
+   NAVEGAÇÃO ATIVA
+   Mantém o link correspondente à seção atual destacado.
+   ================================================== */
+const linksMenu = Array.from(document.querySelectorAll(".menu a"));
+const secoesNavegacao = ["cursos", "cadastro-curso", "impacto"]
+    .map(function(id) { return document.getElementById(id); })
+    .filter(Boolean);
+
+function marcarLinkAtivo(id) {
+    linksMenu.forEach(function(link) {
+        const corresponde = link.getAttribute("href") === "#" + id;
+        link.classList.toggle("ativo", corresponde);
+
+        if (corresponde) {
+            link.setAttribute("aria-current", "page");
+        } else {
+            link.removeAttribute("aria-current");
+        }
+    });
+}
+
+function atualizarLinkAtivo() {
+    if (window.scrollY < 180) {
+        marcarLinkAtivo("topo");
+        return;
+    }
+
+    let secaoAtual = "cursos";
+
+    secoesNavegacao.forEach(function(secao) {
+        if (secao.getBoundingClientRect().top <= 150) {
+            secaoAtual = secao.id;
+        }
+    });
+
+    marcarLinkAtivo(secaoAtual);
+}
+
+linksMenu.forEach(function(link) {
+    link.addEventListener("click", function() {
+        const destino = link.getAttribute("href").slice(1);
+        marcarLinkAtivo(destino);
+    });
+});
+
+window.addEventListener("scroll", atualizarLinkAtivo, { passive: true });
+atualizarLinkAtivo();

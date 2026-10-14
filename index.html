@@ -215,15 +215,37 @@
 
             <!-- Formulário para disponibilizar cursos. -->
             <section class="secao-cadastro" id="cadastro-curso">
-                <p class="etiqueta-secao">Para instituições e parceiros</p>
+                <div class="cadastro-painel">
+                    <span class="cadastro-type-accent">EDUCASIM // NOVA OPORTUNIDADE</span>
 
-                <h2 id="tituloFormularioCurso">Disponibilizar um curso</h2>
+                    <span class="cadastro-bracket cadastro-bracket-tl" aria-hidden="true"></span>
+                    <span class="cadastro-bracket cadastro-bracket-tr" aria-hidden="true"></span>
+                    <span class="cadastro-bracket cadastro-bracket-bl" aria-hidden="true"></span>
+                    <span class="cadastro-bracket cadastro-bracket-br" aria-hidden="true"></span>
 
-                <p>
-                    Cadastre uma oportunidade para que ela apareça na lista de cursos.
-                </p>
+                    <span class="cadastro-rivet cadastro-rivet-1" aria-hidden="true"></span>
+                    <span class="cadastro-rivet cadastro-rivet-2" aria-hidden="true"></span>
+                    <span class="cadastro-rivet cadastro-rivet-3" aria-hidden="true"></span>
+                    <span class="cadastro-rivet cadastro-rivet-4" aria-hidden="true"></span>
 
-                <form id="formularioCadastroCurso">
+                    <div class="cadastro-textura" aria-hidden="true"></div>
+                    <div class="cadastro-cabecalho">
+                        <p class="etiqueta-secao">Para instituições e parceiros</p>
+
+                        <h2 id="tituloFormularioCurso">Disponibilizar um curso</h2>
+
+                        <p>
+                            Cadastre uma oportunidade para que ela apareça na lista de cursos.
+                        </p>
+                    </div>
+
+                    <button type="button" class="cadastro-toggle" id="botaoAbrirCadastro" aria-expanded="false" aria-controls="superficieCadastroCurso">
+                        <span class="cadastro-toggle-label">Abrir formulário</span>
+                        <span class="cadastro-toggle-icon" aria-hidden="true">＋</span>
+                    </button>
+
+                    <div class="cadastro-formulario-superficie" id="superficieCadastroCurso">
+                        <form id="formularioCadastroCurso">
                     <!-- Preenchido somente quando um curso está sendo editado. -->
                     <input type="hidden" id="cursoIdEdicao">
 
@@ -393,7 +415,11 @@
                             Cancelar edição
                         </button>
                     </div>
-                </form>
+                        </form>
+                    </div>
+
+                    <span class="cadastro-scan" aria-hidden="true"></span>
+                </div>
             </section>
 
             <!-- Formulário de inscrição do estudante. -->
