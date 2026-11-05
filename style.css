@@ -2600,3 +2600,80 @@ select:focus-visible {
         transition: none;
     }
 }
+
+
+/* ==================================================
+   AJUSTES DE INTERAÇÃO DOS CARDS
+   Hover no cartão sem ampliar a imagem do curso.
+   ================================================== */
+
+/* Remove qualquer seta decorativa do botão principal. */
+.botao-destaque::after {
+    display: none;
+    content: none;
+}
+
+/* O cartão reage com elevação, cor e sombra; a imagem permanece estável. */
+.cartao-curso {
+    overflow: hidden;
+    transform: translateY(0);
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease,
+        border-top-color 0.28s ease;
+}
+
+.cartao-curso:hover {
+    border-color: #a8d4c7;
+    border-top-color: var(--amarelo-500);
+    box-shadow: 0 18px 34px rgba(8, 45, 40, 0.16);
+    transform: translateY(-6px);
+}
+
+.cartao-curso .imagem-cartao-curso,
+.cartao-curso:hover .imagem-cartao-curso {
+    filter: none;
+    transform: none;
+    transition: filter 0.28s ease;
+}
+
+.cartao-curso:hover .imagem-cartao-curso {
+    filter: brightness(1.035) saturate(1.04);
+}
+
+.cartao-curso .botao-inscricao {
+    transition:
+        background-color 0.28s ease,
+        border-color 0.28s ease,
+        box-shadow 0.28s ease,
+        transform 0.28s ease;
+}
+
+.cartao-curso:hover .botao-inscricao:not(:disabled) {
+    background-color: var(--verde-700);
+    border-color: var(--verde-700);
+    box-shadow: 0 8px 16px rgba(23, 117, 101, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Retira o sublinhado animado da navegação para manter o menu limpo. */
+.menu a::after {
+    display: none;
+}
+
+.menu a:hover,
+.menu a.ativo {
+    background-color: rgba(255, 255, 255, 0.13);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: var(--amarelo-500);
+    transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cartao-curso,
+    .cartao-curso .imagem-cartao-curso,
+    .cartao-curso .botao-inscricao {
+        transition: none;
+    }
+}
