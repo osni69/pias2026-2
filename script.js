@@ -7,10 +7,10 @@ const CHAVE_CURSOS = "educasim_cursos";
 const CHAVE_INSCRICOES = "educasim_inscricoes";
 const CHAVE_EXEMPLOS_CURSOS = "educasim_exemplos_cursos_v1";
 const IMAGENS_CURSOS_DEMONSTRATIVOS = {
-    "exemplo-informatica": "imagens/cursos/informatica.svg",
-    "exemplo-administrativo": "imagens/cursos/administrativo.svg",
-    "exemplo-turismo": "imagens/cursos/turismo.svg",
-    "exemplo-saude": "imagens/cursos/saude.svg"
+    "exemplo-informatica": "imagens/informatica.svg",
+    "exemplo-administrativo": "imagens/administrativo.svg",
+    "exemplo-turismo": "imagens/turismo.svg",
+    "exemplo-saude": "imagens/saude.svg"
 };
 
 // Elementos da navegação mobile.
@@ -1027,7 +1027,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "40 horas",
                 requisitos: "Conhecimentos básicos de leitura",
                 local: "Aulas online",
-                imagem: "imagens/cursos/informatica.svg",
+                imagem: "imagens/informatica.svg",
                 data: agora
             },
             {
@@ -1041,7 +1041,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "60 horas",
                 requisitos: "A partir de 14 anos",
                 local: "Centro de formação EducaSim",
-                imagem: "imagens/cursos/administrativo.svg",
+                imagem: "imagens/administrativo.svg",
                 data: agora
             },
             {
@@ -1055,7 +1055,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "32 horas",
                 requisitos: "Interesse em turismo e cultura",
                 local: "Aulas online",
-                imagem: "imagens/cursos/turismo.svg",
+                imagem: "imagens/turismo.svg",
                 data: agora
             },
             {
@@ -1069,7 +1069,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "24 horas",
                 requisitos: "A partir de 14 anos",
                 local: "Unidade parceira EducaSim",
-                imagem: "imagens/cursos/saude.svg",
+                imagem: "imagens/saude.svg",
                 data: agora
             }
         ];
@@ -1087,7 +1087,7 @@ function atualizarImagensDosExemplos() {
     const cursosAtualizados = cursos.map(function(curso) {
         const imagem = IMAGENS_CURSOS_DEMONSTRATIVOS[curso.id];
 
-        if (imagem && !curso.imagem) {
+        if (imagem && curso.imagem !== imagem) {
             alterou = true;
             return Object.assign({}, curso, { imagem: imagem });
         }
