@@ -8,11 +8,16 @@
     <!-- Adapta o site para celulares, tablets e computadores. -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Cor da barra do navegador no celular e descrição para buscadores. -->
+    <meta name="theme-color" content="#082d28">
+    <meta name="description" content="EducaSim conecta jovens a cursos técnicos e profissionalizantes.">
+
     <!-- Texto exibido na aba do navegador. -->
     <title>EducaSim - Cursos e Oportunidades</title>
 
     <!-- Conecta o HTML ao arquivo de estilos. -->
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="imagens/logo.jpg">
 </head>
 
 <body>
@@ -29,7 +34,7 @@
         </div>
     </dialog>
     <!-- Cabeçalho principal do site. -->
-    <header class="cabecalho" id="topo">
+    <header class="cabecalho" id="topo" tabindex="-1">
 
         <!--
             Identificação institucional exigida pelo projeto.
@@ -60,6 +65,7 @@
                         class="logo-imagem"
                         src="imagens/logo.jpg"
                         alt="Logo do EducaSim"
+                        loading="eager"
                     >
                 </a>
 
@@ -75,9 +81,11 @@
                     aria-expanded="false"
                     aria-controls="menuPrincipal"
                 >
-                    <span class="traco"></span>
-                    <span class="traco"></span>
-                    <span class="traco"></span>
+                    <span class="icone-menu" aria-hidden="true">
+                        <span class="traco-menu"></span>
+                        <span class="traco-menu"></span>
+                        <span class="traco-menu"></span>
+                    </span>
                 </button>
 
                 <!-- Menu principal do site. -->
@@ -205,6 +213,8 @@
                     </div>
                 </div>
 
+                <p class="contador-cursos" id="contadorCursos" role="status" aria-atomic="true"></p>
+
                 <!-- O JavaScript colocará os cartões dos cursos nesta área. -->
                 <div id="listaCursos">
                     <p class="mensagem-vazia">
@@ -216,19 +226,6 @@
             <!-- Formulário para disponibilizar cursos. -->
             <section class="secao-cadastro" id="cadastro-curso">
                 <div class="cadastro-painel">
-                    <span class="cadastro-type-accent">EDUCASIM // NOVA OPORTUNIDADE</span>
-
-                    <span class="cadastro-bracket cadastro-bracket-tl" aria-hidden="true"></span>
-                    <span class="cadastro-bracket cadastro-bracket-tr" aria-hidden="true"></span>
-                    <span class="cadastro-bracket cadastro-bracket-bl" aria-hidden="true"></span>
-                    <span class="cadastro-bracket cadastro-bracket-br" aria-hidden="true"></span>
-
-                    <span class="cadastro-rivet cadastro-rivet-1" aria-hidden="true"></span>
-                    <span class="cadastro-rivet cadastro-rivet-2" aria-hidden="true"></span>
-                    <span class="cadastro-rivet cadastro-rivet-3" aria-hidden="true"></span>
-                    <span class="cadastro-rivet cadastro-rivet-4" aria-hidden="true"></span>
-
-                    <div class="cadastro-textura" aria-hidden="true"></div>
                     <div class="cadastro-cabecalho">
                         <p class="etiqueta-secao">Para instituições e parceiros</p>
 
@@ -241,11 +238,12 @@
 
                     <button type="button" class="cadastro-toggle" id="botaoAbrirCadastro" aria-expanded="false" aria-controls="superficieCadastroCurso">
                         <span class="cadastro-toggle-label">Abrir formulário</span>
-                        <span class="cadastro-toggle-icon" aria-hidden="true">＋</span>
+                        <span class="cadastro-toggle-icon" aria-hidden="true"></span>
                     </button>
 
-                    <div class="cadastro-formulario-superficie" id="superficieCadastroCurso">
-                        <form id="formularioCadastroCurso">
+                    <div class="cadastro-formulario-superficie" id="superficieCadastroCurso" inert>
+                        <div class="cadastro-formulario-conteudo">
+                            <form id="formularioCadastroCurso">
                     <!-- Preenchido somente quando um curso está sendo editado. -->
                     <input type="hidden" id="cursoIdEdicao">
 
@@ -270,14 +268,19 @@
                             Imagem do curso
                         </label>
 
-                        <input
-                            type="file"
-                            id="imagemCurso"
-                            name="imagemCurso"
-                            accept="image/png, image/jpeg, image/webp"
-                        >
+                        <div class="seletor-imagem-curso">
+                            <input
+                                type="file"
+                                id="imagemCurso"
+                                name="imagemCurso"
+                                accept="image/png, image/jpeg, image/webp"
+                                aria-describedby="ajudaImagemCurso"
+                            >
+                            <span class="acao-seletor-imagem" aria-hidden="true">Selecionar imagem</span>
+                            <span class="nome-seletor-imagem" id="nomeImagemCurso" aria-hidden="true">Nenhum arquivo selecionado</span>
+                        </div>
 
-                        <small>
+                        <small id="ajudaImagemCurso">
                             Escolha uma imagem PNG, JPG ou WEBP. Este campo é opcional.
                         </small>
 
@@ -415,10 +418,9 @@
                             Cancelar edição
                         </button>
                     </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
-
-                    <span class="cadastro-scan" aria-hidden="true"></span>
                 </div>
             </section>
 
@@ -485,7 +487,8 @@
                             type="tel"
                             id="telefoneInscricao"
                             name="telefoneInscricao"
-                            placeholder="Digite seu telefone"
+                            autocomplete="tel-national"
+                            placeholder="(45) 99999-9999"
                             required
                         >
                     </div>
@@ -619,31 +622,31 @@
             <strong>Fale conosco</strong>
 
             <a
-                href="https://wa.me/554599526372"
+                href="https://wa.me/5545999526372"
                 target="_blank"
                 rel="noopener noreferrer"
             >
-                WhatsApp: (45 ) 99952-6372
+                WhatsApp: (45) 99952-6372
             </a>
 
-            <a href="mailto:contato@educasim.com.br">
+            <a href="mailto:EducaSim@gmail.com">
                 E-mail: EducaSim@gmail.com
             </a>
         </div>
 
         <div class="garotodeprograma">
-            <div class="grt-card"><a href="http://garotosdeprogama.onrender.com/"><img src="imagens/logo.png" alt="Logo da garotos de programa"></a></div>
-            
+            <div class="grt-card">
+                <a href="https://garotosdeprogama.onrender.com/">
+                    <img src="imagens/logo.png" alt="Garotos de Programa" width="640" height="640" loading="lazy">
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="rodape-final">
         <small>&copy; 2026 EducaSim. Todos os direitos reservados.</small>
 
-        <div>
-            <a href="#privacidade">Política de privacidade</a>
-            <a href="#termos">Termos de uso</a>
-        </div>
+        <!-- Insira os links legais quando houver destinos oficiais. -->
     </div>
 </footer>
 

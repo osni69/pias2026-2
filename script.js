@@ -7,10 +7,10 @@ const CHAVE_CURSOS = "educasim_cursos";
 const CHAVE_INSCRICOES = "educasim_inscricoes";
 const CHAVE_EXEMPLOS_CURSOS = "educasim_exemplos_cursos_v1";
 const IMAGENS_CURSOS_DEMONSTRATIVOS = {
-    "exemplo-informatica": "imagens/informatica.svg",
-    "exemplo-administrativo": "imagens/administrativo.svg",
-    "exemplo-turismo": "imagens/turismo.svg",
-    "exemplo-saude": "imagens/saude.svg"
+    "exemplo-informatica": "imagens/informatica.png",
+    "exemplo-administrativo": "imagens/administrativo.png",
+    "exemplo-turismo": "imagens/turismo.png",
+    "exemplo-saude": "imagens/saude.png"
 };
 
 // Elementos da navegação mobile.
@@ -21,12 +21,14 @@ const menuPrincipal = document.getElementById("menuPrincipal");
 const formularioCadastroCurso = document.getElementById("formularioCadastroCurso");
 const listaCursos = document.getElementById("listaCursos");
 const imagemCurso = document.getElementById("imagemCurso");
+const nomeImagemCurso = document.getElementById("nomeImagemCurso");
 const previaImagemCurso = document.getElementById("previaImagemCurso");
 
 // Elementos de busca e filtro.
 const buscaCurso = document.getElementById("buscaCurso");
 const filtroCategoria = document.getElementById("filtroCategoria");
 const filtroModalidade = document.getElementById("filtroModalidade");
+const contadorCursos = document.getElementById("contadorCursos");
 
 // Elementos do formulário de inscrição.
 const formularioInscricao = document.getElementById("formularioInscricao");
@@ -34,6 +36,7 @@ const areaInscricao = document.getElementById("area-inscricao");
 const cursoSelecionado = document.getElementById("cursoSelecionado");
 const cursoIdInscricao = document.getElementById("cursoIdInscricao");
 const botaoCancelarInscricao = document.getElementById("botaoCancelarInscricao");
+const telefoneInscricao = document.getElementById("telefoneInscricao");
 
 // Elementos da lista de inscrições e dos indicadores.
 const listaInscricoes = document.getElementById("listaInscricoes");
@@ -60,37 +63,35 @@ const botaoCancelarEdicao = document.getElementById("botaoCancelarEdicao");
    Abre e fecha a navegação no celular.
    ================================================== */
 
-function fecharMenuMobile() {
-    // Retira a classe que mostra o menu.
-    menuPrincipal.classList.remove("aberto");
+const menuMobile = window.matchMedia("(max-width: 860px)");
 
-    // Retira a aparência de botão aberto.
-    botaoMenu.classList.remove("aberto");
+function definirMenuAberto(aberto) {
+    const menuInativo = menuMobile.matches && !aberto;
+    if (menuInativo && menuPrincipal.contains(document.activeElement)) {
+        botaoMenu.focus({ preventScroll: true });
+    }
 
-    // Atualiza a informação para leitores de tela.
-    botaoMenu.setAttribute("aria-expanded", "false");
-    botaoMenu.setAttribute("aria-label", "Abrir menu de navegação");
-}
-
-function alternarMenuMobile() {
-    // Verifica se o menu está aberto neste momento.
-    const menuEstaAberto = menuPrincipal.classList.toggle("aberto");
-
-    // Faz o ícone acompanhar o estado do menu.
-    botaoMenu.classList.toggle("aberto", menuEstaAberto);
-
-    // Atualiza os atributos de acessibilidade.
-    botaoMenu.setAttribute("aria-expanded", String(menuEstaAberto));
+    menuPrincipal.classList.toggle("aberto", aberto);
+    menuPrincipal.inert = menuInativo;
+    botaoMenu.classList.toggle("aberto", aberto);
+    botaoMenu.setAttribute("aria-expanded", String(aberto));
     botaoMenu.setAttribute(
         "aria-label",
-        menuEstaAberto
-            ? "Fechar menu de navegação"
-            : "Abrir menu de navegação"
+        aberto ? "Fechar menu de navegação" : "Abrir menu de navegação"
     );
 }
 
+function fecharMenuMobile() {
+    definirMenuAberto(false);
+}
+
 // Abre ou fecha o menu quando o botão é clicado.
-botaoMenu.addEventListener("click", alternarMenuMobile);
+botaoMenu.addEventListener("click", function() {
+    definirMenuAberto(!menuPrincipal.classList.contains("aberto"));
+});
+
+menuMobile.addEventListener("change", fecharMenuMobile);
+fecharMenuMobile();
 
 // Fecha o menu depois que um link é escolhido.
 menuPrincipal.querySelectorAll("a").forEach(function(link) {
@@ -120,7 +121,6 @@ function atualizarNavbar() {
     }
 }
 
-window.addEventListener("scroll", atualizarNavbar, { passive: true });
 atualizarNavbar();
 
 
@@ -150,11 +150,10 @@ function gravarLista(chave, lista) {
         localStorage.setItem(chave, JSON.stringify(lista));
         return true;
     } catch (erro) {
-        // Imagens grandes podem ultrapassar o espaço do localStorage.
-        mostrarAviso(
-            "Não foi possível salvar os dados. A imagem pode ser muito grande para o armazenamento deste navegador.",
-            "erro"
-        );
+        const mensagem = erro.name === "QuotaExceededError"
+            ? "O armazenamento deste navegador está cheio. As informações já salvas foram mantidas."
+            : "Não foi possível salvar os dados neste navegador.";
+        mostrarAviso(mensagem, "erro");
         return false;
     }
 }
@@ -218,6 +217,146 @@ function calcularVagasDisponiveis(curso) {
     const vagasOcupadas = contarInscricoesDoCurso(curso.id);
     return Math.max(0, Number(curso.vagas) - vagasOcupadas);
 }
+
+
+/* ==================================================
+   VALIDAÇÃO DOS FORMULÁRIOS
+   Apresenta as mensagens próximas aos campos.
+   ================================================== */
+
+const mensagensCamposObrigatorios = {
+    tituloCurso: "Informe o título do curso.",
+    categoriaCurso: "Selecione a categoria do curso.",
+    vagasCurso: "Informe a quantidade de vagas.",
+    modalidadeCurso: "Selecione a modalidade do curso.",
+    descricaoCurso: "Informe a descrição do curso.",
+    nomeCompleto: "Informe seu nome completo.",
+    dataNascimento: "Informe sua data de nascimento.",
+    emailInscricao: "Informe seu e-mail.",
+    telefoneInscricao: "Informe seu telefone.",
+    cidadeInscricao: "Informe sua cidade.",
+    escolaridadeInscricao: "Selecione sua escolaridade.",
+    aceiteInscricao: "Confirme as informações para continuar."
+};
+
+const errosCampos = new WeakMap();
+
+function obterMensagemValidacao(campo) {
+    const validade = campo.validity;
+
+    if (validade.badInput) {
+        return campo.type === "date" ? "Informe uma data válida." : "Informe um número válido.";
+    }
+    if (validade.valueMissing) {
+        return mensagensCamposObrigatorios[campo.id] || "Preencha este campo.";
+    }
+    if (validade.typeMismatch && campo.type === "email") {
+        return "Informe um e-mail válido, como nome@exemplo.com.";
+    }
+    if (validade.rangeUnderflow) {
+        return "Informe um valor de pelo menos " + campo.min + ".";
+    }
+    if (validade.rangeOverflow) {
+        return "Informe um valor de no máximo " + campo.max + ".";
+    }
+    if (validade.stepMismatch && campo.type === "number") {
+        return "Informe um número inteiro.";
+    }
+    if (validade.tooLong) {
+        return "Use no máximo " + campo.maxLength + " caracteres.";
+    }
+
+    return validade.valid ? "" : "Confira o valor informado neste campo.";
+}
+
+function limparErroCampo(campo) {
+    const erro = errosCampos.get(campo);
+    if (!erro) {
+        return;
+    }
+
+    erro.elemento.remove();
+    errosCampos.delete(campo);
+
+    const descricoes = (campo.getAttribute("aria-describedby") || "").split(/\s+/).filter(function(id) {
+        return id && id !== erro.elemento.id;
+    });
+    if (descricoes.length) {
+        campo.setAttribute("aria-describedby", descricoes.join(" "));
+    } else {
+        campo.removeAttribute("aria-describedby");
+    }
+
+    if (erro.ariaInvalidAnterior === null) {
+        campo.removeAttribute("aria-invalid");
+    } else {
+        campo.setAttribute("aria-invalid", erro.ariaInvalidAnterior);
+    }
+}
+
+function atualizarErroCampo(campo, mensagem) {
+    if (!mensagem) {
+        limparErroCampo(campo);
+        return;
+    }
+
+    const erro = errosCampos.get(campo);
+    if (erro) {
+        erro.elemento.textContent = mensagem;
+        return;
+    }
+
+    const elemento = document.createElement("p");
+    elemento.id = campo.id + "-erro";
+    elemento.className = "erro-campo";
+    elemento.textContent = mensagem;
+    campo.closest(".campo").appendChild(elemento);
+
+    errosCampos.set(campo, { elemento: elemento, ariaInvalidAnterior: campo.getAttribute("aria-invalid") });
+    const descricoes = campo.getAttribute("aria-describedby");
+    campo.setAttribute("aria-describedby", descricoes ? descricoes + " " + elemento.id : elemento.id);
+    campo.setAttribute("aria-invalid", "true");
+}
+
+function limparErrosFormulario(formulario) {
+    Array.from(formulario.elements).forEach(limparErroCampo);
+}
+
+function validarFormulario(formulario) {
+    let primeiroInvalido = null;
+
+    for (const campo of formulario.elements) {
+        const mensagem = campo.willValidate ? obterMensagemValidacao(campo) : "";
+        atualizarErroCampo(campo, mensagem);
+        if (mensagem && !primeiroInvalido) {
+            primeiroInvalido = campo;
+        }
+    }
+
+    if (primeiroInvalido) {
+        primeiroInvalido.focus({ preventScroll: true });
+        primeiroInvalido.closest(".campo").scrollIntoView({ block: "center" });
+    }
+
+    return primeiroInvalido === null;
+}
+
+[formularioCadastroCurso, formularioInscricao].forEach(function(formulario) {
+    formulario.noValidate = true;
+
+    function revalidarCampo(evento) {
+        const campo = evento.target;
+        if (errosCampos.has(campo)) {
+            atualizarErroCampo(campo, campo.willValidate ? obterMensagemValidacao(campo) : "");
+        }
+    }
+
+    formulario.addEventListener("input", revalidarCampo);
+    formulario.addEventListener("change", revalidarCampo);
+    formulario.addEventListener("reset", function() {
+        limparErrosFormulario(formulario);
+    });
+});
 
 
 /* ==================================================
@@ -286,59 +425,230 @@ botaoCancelarExclusao.addEventListener("click", function() {
 
 
 /* ==================================================
-   UPLOAD E PRÉVIA DA IMAGEM
-   Lê a imagem escolhida antes do cadastro.
+   IMAGEM DO CURSO
+   Guarda os arquivos originais no IndexedDB e suas referências nos cursos.
    ================================================== */
 
-let imagemSelecionada = "";
+const BANCO_IMAGENS_CURSOS = "educasim_imagens_cursos";
+const LOJA_IMAGENS_CURSOS = "imagens";
+const PREFIXO_IMAGEM_ORIGINAL = "imagem-original:";
+const urlsImagensCurso = new WeakMap();
+const textoSemArquivo = nomeImagemCurso.textContent;
+
+let bancoImagensCursos = null;
+let novaImagemCurso = null;
+let preparacaoImagem = null;
+let salvandoCurso = false;
+
+function abrirBancoImagensCursos() {
+    if (!bancoImagensCursos) {
+        bancoImagensCursos = new Promise(function(resolver, rejeitar) {
+            const pedido = indexedDB.open(BANCO_IMAGENS_CURSOS, 1);
+
+            pedido.onupgradeneeded = function() {
+                pedido.result.createObjectStore(LOJA_IMAGENS_CURSOS);
+            };
+            pedido.onsuccess = function() {
+                const banco = pedido.result;
+                banco.onversionchange = function() {
+                    banco.close();
+                    bancoImagensCursos = null;
+                };
+                resolver(banco);
+            };
+            pedido.onerror = function() {
+                rejeitar(pedido.error);
+            };
+            pedido.onblocked = function() {
+                pedido.onsuccess = function() { pedido.result.close(); };
+                rejeitar(new Error("O armazenamento de imagens está ocupado."));
+            };
+        }).catch(function(erro) {
+            bancoImagensCursos = null;
+            throw erro;
+        });
+    }
+
+    return bancoImagensCursos;
+}
+
+async function acessarImagemOriginal(modo, operacao) {
+    const banco = await abrirBancoImagensCursos();
+
+    return new Promise(function(resolver, rejeitar) {
+        const transacao = banco.transaction(LOJA_IMAGENS_CURSOS, modo);
+        const pedido = operacao(transacao.objectStore(LOJA_IMAGENS_CURSOS));
+
+        transacao.oncomplete = function() {
+            resolver(pedido?.result);
+        };
+        transacao.onabort = function() {
+            rejeitar(transacao.error || pedido?.error);
+        };
+    });
+}
+
+function ehReferenciaImagemOriginal(origem) {
+    return typeof origem === "string" && origem.startsWith(PREFIXO_IMAGEM_ORIGINAL);
+}
+
+async function salvarImagemOriginal(arquivo) {
+    const referencia = PREFIXO_IMAGEM_ORIGINAL + criarId();
+
+    await acessarImagemOriginal("readwrite", function(imagens) {
+        return imagens.add(arquivo, referencia);
+    });
+
+    return referencia;
+}
+
+function descartarImagemOriginal(origem) {
+    if (!ehReferenciaImagemOriginal(origem)) {
+        return;
+    }
+
+    acessarImagemOriginal("readwrite", function(imagens) {
+        if (!lerCursos().some(function(curso) { return curso.imagem === origem; })) {
+            return imagens.delete(origem);
+        }
+    }).catch(function() {
+        // A remoção da cópia sem curso associado pode falhar sem afetar os cursos salvos.
+    });
+}
+
+function mostrarArquivoNaImagem(imagem, arquivo) {
+    const url = URL.createObjectURL(arquivo);
+    urlsImagensCurso.set(imagem, url);
+    imagem.src = url;
+}
+
+async function carregarImagemCurso(imagem, origem) {
+    if (origem instanceof Blob) {
+        mostrarArquivoNaImagem(imagem, origem);
+        return;
+    }
+
+    if (!ehReferenciaImagemOriginal(origem)) {
+        imagem.src = origem;
+        return;
+    }
+
+    try {
+        const arquivo = await acessarImagemOriginal("readonly", function(imagens) {
+            return imagens.get(origem);
+        });
+
+        if (imagem.isConnected) {
+            if (arquivo instanceof Blob) {
+                mostrarArquivoNaImagem(imagem, arquivo);
+            } else {
+                imagem.hidden = true;
+            }
+        }
+    } catch (erro) {
+        imagem.hidden = true;
+    }
+}
+
+function liberarUrlsImagensCurso(container) {
+    container.querySelectorAll("img").forEach(function(imagem) {
+        const url = urlsImagensCurso.get(imagem);
+
+        if (url) {
+            URL.revokeObjectURL(url);
+            urlsImagensCurso.delete(imagem);
+        }
+    });
+}
 
 function exibirPrevia(origem) {
+    liberarUrlsImagensCurso(previaImagemCurso);
     previaImagemCurso.innerHTML = "";
 
+    if (!origem) {
+        return;
+    }
+
     const imagem = document.createElement("img");
-    imagem.src = origem;
     imagem.alt = "Prévia da imagem do curso";
 
     previaImagemCurso.appendChild(imagem);
+    carregarImagemCurso(imagem, origem);
 }
 
-function limparPreviaImagem() {
-    previaImagemCurso.innerHTML = "";
-    imagemSelecionada = "";
+function definirPreparacaoImagem(preparacao) {
+    preparacaoImagem = preparacao;
+    botaoSalvarCurso.disabled = Boolean(preparacao) || salvandoCurso;
 }
 
-function mostrarPreviaImagem(arquivo) {
-    limparPreviaImagem();
+function definirSalvamentoCurso(gravando) {
+    salvandoCurso = gravando;
+    formularioCadastroCurso.inert = gravando;
+    botaoSalvarCurso.disabled = Boolean(preparacaoImagem) || gravando;
+}
+
+function restaurarPreviaImagem(origem) {
+    definirPreparacaoImagem(null);
+    novaImagemCurso = null;
+    nomeImagemCurso.textContent = textoSemArquivo;
+    exibirPrevia(origem);
+}
+
+function restaurarImagemSalva() {
+    const curso = cursoIdEdicao.value ? buscarCurso(cursoIdEdicao.value) : null;
+    imagemCurso.value = "";
+    restaurarPreviaImagem(curso?.imagem || "");
+}
+
+async function validarImagemCurso(arquivo) {
+    const url = URL.createObjectURL(arquivo);
+
+    try {
+        const imagem = new Image();
+        imagem.src = url;
+        await imagem.decode();
+    } finally {
+        URL.revokeObjectURL(url);
+    }
+}
+
+imagemCurso.addEventListener("change", async function() {
+    const arquivo = imagemCurso.files[0];
 
     if (!arquivo) {
+        restaurarImagemSalva();
         return;
     }
 
     if (!arquivo.type.startsWith("image/")) {
-        mostrarAviso("Escolha um arquivo de imagem válido.", "erro");
+        definirPreparacaoImagem(null);
         imagemCurso.value = "";
+        mostrarAviso("Escolha um arquivo de imagem válido.", "erro");
         return;
     }
 
-    const leitor = new FileReader();
+    const preparacao = validarImagemCurso(arquivo);
+    definirPreparacaoImagem(preparacao);
 
-    leitor.addEventListener("load", function() {
-        imagemSelecionada = leitor.result;
-        exibirPrevia(imagemSelecionada);
-        mostrarAviso("Imagem selecionada com sucesso.");
-    });
+    try {
+        await preparacao;
 
-    leitor.addEventListener("error", function() {
-        mostrarAviso("Não foi possível ler esta imagem.", "erro");
-        imagemCurso.value = "";
-    });
-
-    // Converte a imagem em texto para permitir o uso no localStorage.
-    leitor.readAsDataURL(arquivo);
-}
-
-imagemCurso.addEventListener("change", function() {
-    mostrarPreviaImagem(imagemCurso.files[0]);
+        if (preparacaoImagem === preparacao) {
+            novaImagemCurso = arquivo;
+            nomeImagemCurso.textContent = arquivo.name;
+            exibirPrevia(arquivo);
+            mostrarAviso("Imagem selecionada com sucesso.");
+        }
+    } catch (erro) {
+        if (preparacaoImagem === preparacao) {
+            imagemCurso.value = "";
+            mostrarAviso("Não foi possível preparar esta imagem. Escolha outro arquivo.", "erro");
+        }
+    } finally {
+        if (preparacaoImagem === preparacao) {
+            definirPreparacaoImagem(null);
+        }
+    }
 });
 
 
@@ -394,11 +704,6 @@ function criarDetalhesCurso(curso) {
     const conteudos = Array.isArray(curso.conteudos) ? curso.conteudos : [];
     const temDetalhes = conteudos.length > 0 || curso.duracao || curso.requisitos || curso.local;
 
-    // Cursos cadastrados antes desta versão não têm esses campos.
-    if (!temDetalhes) {
-        return null;
-    }
-
     const detalhes = document.createElement("details");
     detalhes.className = "detalhes-curso";
 
@@ -406,10 +711,14 @@ function criarDetalhesCurso(curso) {
     resumo.textContent = "Ver detalhes do curso";
     detalhes.appendChild(resumo);
 
+    const corpo = document.createElement("div");
+    corpo.className = "conteudo-detalhes-curso";
+    detalhes.appendChild(corpo);
+
     if (conteudos.length > 0) {
         const subtitulo = document.createElement("h4");
         subtitulo.textContent = "Conteúdos aprendidos";
-        detalhes.appendChild(subtitulo);
+        corpo.appendChild(subtitulo);
 
         const lista = document.createElement("ul");
 
@@ -419,12 +728,19 @@ function criarDetalhesCurso(curso) {
             lista.appendChild(item);
         });
 
-        detalhes.appendChild(lista);
+        corpo.appendChild(lista);
     }
 
-    adicionarInformacao(detalhes, "Duração", curso.duracao || "Não informado");
-    adicionarInformacao(detalhes, "Requisitos", curso.requisitos || "Não informado");
-    adicionarLocal(detalhes, curso.local);
+    if (temDetalhes) {
+        adicionarInformacao(corpo, "Duração", curso.duracao || "Não informado");
+        adicionarInformacao(corpo, "Requisitos", curso.requisitos || "Não informado");
+        adicionarLocal(corpo, curso.local);
+    }
+
+    const dataPublicacao = document.createElement("p");
+    dataPublicacao.className = "data-cartao-curso";
+    dataPublicacao.textContent = "Disponibilizado em " + formatarData(curso.data);
+    corpo.appendChild(dataPublicacao);
 
     return detalhes;
 }
@@ -435,40 +751,53 @@ function criarCartaoCurso(curso) {
 
     cartao.className = "cartao-curso";
 
-    if (vagasDisponiveis === 0) {
-        cartao.classList.add("curso-esgotado");
-    }
-
     // Mostra a imagem somente quando o curso possui uma imagem salva.
     if (curso.imagem) {
         const imagem = document.createElement("img");
         imagem.className = "imagem-cartao-curso";
-        imagem.src = curso.imagem;
         imagem.alt = "Imagem do curso " + curso.titulo;
+        imagem.loading = "lazy";
+        imagem.decoding = "async";
+        carregarImagemCurso(imagem, curso.imagem);
         cartao.appendChild(imagem);
     }
 
+    const conteudo = document.createElement("div");
+    conteudo.className = "conteudo-cartao-curso";
+    cartao.appendChild(conteudo);
+
+    const cabecalho = document.createElement("header");
+    cabecalho.className = "cabecalho-cartao-curso";
+
+    const categoria = document.createElement("p");
+    categoria.className = "categoria-curso";
+    categoria.textContent = curso.categoria;
+    cabecalho.appendChild(categoria);
+
     const titulo = document.createElement("h3");
     titulo.textContent = curso.titulo;
-    cartao.appendChild(titulo);
+    cabecalho.appendChild(titulo);
+    conteudo.appendChild(cabecalho);
 
     if (curso.descricao) {
         const descricao = document.createElement("p");
         descricao.className = "descricao-curso";
         descricao.textContent = curso.descricao;
-        cartao.appendChild(descricao);
+        conteudo.appendChild(descricao);
     }
 
-    adicionarInformacao(cartao, "Categoria", curso.categoria);
-    adicionarInformacao(cartao, "Modalidade", curso.modalidade);
-    adicionarInformacao(cartao, "Vagas disponíveis", vagasDisponiveis);
-    adicionarInformacao(cartao, "Disponibilizado em", formatarData(curso.data));
+    const informacoes = document.createElement("p");
+    informacoes.className = "informacoes-curso";
 
-    const detalhes = criarDetalhesCurso(curso);
+    const modalidade = document.createElement("span");
+    modalidade.textContent = curso.modalidade;
 
-    if (detalhes) {
-        cartao.appendChild(detalhes);
-    }
+    const vagas = document.createElement("span");
+    vagas.textContent = vagasDisponiveis === 1 ? "1 vaga" : vagasDisponiveis + " vagas";
+
+    informacoes.append(modalidade, vagas);
+    conteudo.appendChild(informacoes);
+    conteudo.appendChild(criarDetalhesCurso(curso));
 
     const botaoInscricao = document.createElement("button");
     botaoInscricao.type = "button";
@@ -483,13 +812,16 @@ function criarCartaoCurso(curso) {
         botaoInscricao.textContent = "Quero me inscrever";
     }
 
-    cartao.appendChild(botaoInscricao);
+    const controles = document.createElement("div");
+    controles.className = "controles-cartao-curso";
+    controles.appendChild(botaoInscricao);
 
     const acoes = document.createElement("div");
     acoes.className = "acoes-cartao";
     acoes.appendChild(criarBotaoAcao("Editar", "editar", curso, "botao-editar"));
     acoes.appendChild(criarBotaoAcao("Excluir", "excluir", curso, "botao-excluir"));
-    cartao.appendChild(acoes);
+    controles.appendChild(acoes);
+    conteudo.appendChild(controles);
 
     return cartao;
 }
@@ -499,6 +831,8 @@ function criarCartaoCurso(curso) {
    LISTAGEM, BUSCA E FILTROS
    Exibe os cursos conforme a pesquisa do visitante.
    ================================================== */
+
+let idsCursosExibidos = [];
 
 function atualizarEstadoFiltros() {
     const filtros = [
@@ -516,24 +850,11 @@ function atualizarEstadoFiltros() {
     });
 
     document.querySelector(".filtros-cursos").classList.toggle("filtro-ativo", existeFiltroAtivo);
-}
-
-function animarAtualizacaoDaLista() {
-    listaCursos.classList.remove("atualizando");
-    void listaCursos.offsetWidth;
-    listaCursos.classList.add("atualizando");
-
-    window.setTimeout(function() {
-        listaCursos.classList.remove("atualizando");
-    }, 460);
+    return existeFiltroAtivo;
 }
 
 function mostrarCursos(animarLista) {
-    atualizarEstadoFiltros();
-
-    if (animarLista === true) {
-        animarAtualizacaoDaLista();
-    }
+    const existeFiltroAtivo = atualizarEstadoFiltros();
 
     const cursos = lerCursos();
     const textoBusca = buscaCurso.value.trim().toLowerCase();
@@ -548,15 +869,50 @@ function mostrarCursos(animarLista) {
         return combinaBusca && combinaCategoria && combinaModalidade;
     });
 
+    const ids = cursosFiltrados.map(function(curso) { return curso.id; });
+    const mudouResultado = ids.length !== idsCursosExibidos.length ||
+        ids.some(function(id, indice) { return id !== idsCursosExibidos[indice]; });
+
+    idsCursosExibidos = ids;
+    if (animarLista && mudouResultado) {
+        listaCursos.classList.add("atualizando");
+    }
+
+    const total = cursosFiltrados.length;
+    const contagem = total === 1 ? "1 curso encontrado" : total + " cursos encontrados";
+    if (contadorCursos.textContent !== contagem) {
+        contadorCursos.textContent = contagem;
+    }
+
+    liberarUrlsImagensCurso(listaCursos);
     listaCursos.innerHTML = "";
 
-    if (cursosFiltrados.length === 0) {
+    if (total === 0) {
+        const estadoVazio = document.createElement("div");
+        estadoVazio.className = "estado-vazio-cursos";
         const mensagem = document.createElement("p");
         mensagem.className = "mensagem-vazia";
-        mensagem.textContent = cursos.length === 0
-            ? "Nenhum curso disponível no momento."
-            : "Nenhum curso encontrado com esses filtros.";
-        listaCursos.appendChild(mensagem);
+        mensagem.textContent = existeFiltroAtivo
+            ? "Nenhum curso encontrado para esses filtros"
+            : "Nenhum curso disponível no momento.";
+        estadoVazio.appendChild(mensagem);
+
+        if (existeFiltroAtivo) {
+            const botaoLimpar = document.createElement("button");
+            botaoLimpar.type = "button";
+            botaoLimpar.className = "botao-acao botao-limpar-filtros";
+            botaoLimpar.textContent = "Limpar filtros";
+            botaoLimpar.addEventListener("click", function() {
+                buscaCurso.value = "";
+                filtroCategoria.value = "";
+                filtroModalidade.value = "";
+                mostrarCursos(true);
+                buscaCurso.focus();
+            });
+            estadoVazio.appendChild(botaoLimpar);
+        }
+
+        listaCursos.appendChild(estadoVazio);
         atualizarIndicadores();
         return;
     }
@@ -568,9 +924,14 @@ function mostrarCursos(animarLista) {
     atualizarIndicadores();
 }
 
+listaCursos.addEventListener("animationend", function(evento) {
+    if (evento.target === listaCursos && evento.animationName === "atualizar-lista-cursos") {
+        listaCursos.classList.remove("atualizando");
+    }
+});
+
 buscaCurso.addEventListener("input", function() {
-    // A busca atualiza imediatamente, sem reiniciar a animação a cada tecla.
-    mostrarCursos(false);
+    mostrarCursos(true);
 });
 
 filtroCategoria.addEventListener("change", function() {
@@ -596,7 +957,7 @@ function buscarCurso(id) {
 function sairModoEdicao() {
     cursoIdEdicao.value = "";
     formularioCadastroCurso.reset();
-    limparPreviaImagem();
+    restaurarPreviaImagem("");
 
     tituloFormularioCurso.textContent = "Disponibilizar um curso";
     botaoSalvarCurso.textContent = "Disponibilizar curso";
@@ -604,6 +965,11 @@ function sairModoEdicao() {
 }
 
 function iniciarEdicaoCurso(id) {
+    if (salvandoCurso) {
+        mostrarAviso("Aguarde a gravação do curso atual.", "info");
+        return;
+    }
+
     const curso = buscarCurso(id);
 
     if (!curso) {
@@ -611,6 +977,7 @@ function iniciarEdicaoCurso(id) {
         return;
     }
 
+    limparErrosFormulario(formularioCadastroCurso);
     cursoIdEdicao.value = curso.id;
     document.getElementById("tituloCurso").value = curso.titulo;
     document.getElementById("categoriaCurso").value = curso.categoria;
@@ -624,17 +991,13 @@ function iniciarEdicaoCurso(id) {
 
     // Mantém a imagem atual, a menos que uma nova seja escolhida.
     imagemCurso.value = "";
-    imagemSelecionada = curso.imagem || "";
-    previaImagemCurso.innerHTML = "";
-
-    if (imagemSelecionada) {
-        exibirPrevia(imagemSelecionada);
-    }
+    restaurarPreviaImagem(curso.imagem || "");
 
     tituloFormularioCurso.textContent = "Editar curso";
     botaoSalvarCurso.textContent = "Salvar alterações";
     botaoCancelarEdicao.hidden = false;
 
+    definirCadastroAberto(true);
     document.getElementById("cadastro-curso").scrollIntoView({ behavior: "smooth" });
     document.getElementById("tituloCurso").focus({ preventScroll: true });
     mostrarAviso("Você está editando o curso. Salve ou cancele a edição.", "info");
@@ -677,13 +1040,18 @@ async function excluirCurso(id) {
         });
     }
 
-    const cursosRestantes = lerCursos().filter(function(item) {
+    const cursos = lerCursos();
+    const cursoRemovido = cursos.find(function(item) { return item.id === id; });
+    const cursosRestantes = cursos.filter(function(item) {
         return item.id !== id;
     });
 
     if (!gravarCursos(cursosRestantes)) {
+        cartaoCurso?.classList.remove("saindo");
         return;
     }
+
+    descartarImagemOriginal(cursoRemovido?.imagem);
 
     if (totalInscricoes > 0) {
         gravarInscricoes(lerInscricoes().filter(function(inscricao) {
@@ -711,8 +1079,12 @@ botaoCancelarEdicao.addEventListener("click", function() {
     mostrarAviso("Edição cancelada.", "info");
 });
 
-formularioCadastroCurso.addEventListener("submit", function(evento) {
+formularioCadastroCurso.addEventListener("submit", async function(evento) {
     evento.preventDefault();
+
+    if (preparacaoImagem || salvandoCurso || !validarFormulario(formularioCadastroCurso)) {
+        return;
+    }
 
     const idEdicao = cursoIdEdicao.value;
 
@@ -729,7 +1101,7 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
         duracao: document.getElementById("duracaoCurso").value.trim(),
         requisitos: document.getElementById("requisitosCurso").value.trim(),
         local: document.getElementById("localCurso").value.trim(),
-        imagem: imagemSelecionada
+        imagem: ""
     };
 
     if (dados.vagas < 1) {
@@ -737,7 +1109,25 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
         return;
     }
 
+    if (novaImagemCurso) {
+        definirSalvamentoCurso(true);
+
+        try {
+            dados.imagem = await salvarImagemOriginal(novaImagemCurso);
+        } catch (erro) {
+            const mensagem = erro?.name === "QuotaExceededError"
+                ? "O armazenamento deste navegador está cheio. As informações já salvas foram mantidas."
+                : "Não foi possível guardar a imagem original neste navegador.";
+            mostrarAviso(mensagem, "erro");
+            return;
+        } finally {
+            definirSalvamentoCurso(false);
+        }
+    }
+
+    const referenciaNovaImagem = dados.imagem;
     const cursos = lerCursos();
+    let imagemAnterior = "";
 
     if (idEdicao) {
         const posicao = cursos.findIndex(function(curso) {
@@ -745,6 +1135,7 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
         });
 
         if (posicao === -1) {
+            descartarImagemOriginal(referenciaNovaImagem);
             mostrarAviso("Este curso não existe mais.", "erro");
             sairModoEdicao();
             mostrarCursos();
@@ -755,6 +1146,7 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
         const inscritos = contarInscricoesDoCurso(idEdicao);
 
         if (dados.vagas < inscritos) {
+            descartarImagemOriginal(referenciaNovaImagem);
             mostrarAviso(
                 "Este curso já tem " + inscritos + " inscrição(ões). O total de vagas não pode ser menor que isso.",
                 "erro"
@@ -762,12 +1154,26 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
             return;
         }
 
+        imagemAnterior = cursos[posicao].imagem || "";
+        dados.imagem = referenciaNovaImagem || imagemAnterior;
         cursos[posicao] = Object.assign({}, cursos[posicao], dados);
+    } else {
+        cursos.unshift(Object.assign({
+            id: criarId(),
+            data: new Date().toISOString()
+        }, dados));
+    }
 
-        if (!gravarCursos(cursos)) {
-            return;
-        }
+    if (!gravarCursos(cursos)) {
+        descartarImagemOriginal(referenciaNovaImagem);
+        return;
+    }
 
+    if (referenciaNovaImagem) {
+        descartarImagemOriginal(imagemAnterior);
+    }
+
+    if (idEdicao) {
         // Mantém o nome do curso atualizado nas inscrições já feitas.
         const inscricoes = lerInscricoes();
 
@@ -778,22 +1184,15 @@ formularioCadastroCurso.addEventListener("submit", function(evento) {
         });
 
         gravarInscricoes(inscricoes);
-        sairModoEdicao();
-        mostrarCursos();
+    }
+
+    sairModoEdicao();
+    mostrarCursos();
+
+    if (idEdicao) {
         mostrarInscricoes();
         mostrarAviso("Curso atualizado com sucesso.");
     } else {
-        cursos.unshift(Object.assign({
-            id: criarId(),
-            data: new Date().toISOString()
-        }, dados));
-
-        if (!gravarCursos(cursos)) {
-            return;
-        }
-
-        sairModoEdicao();
-        mostrarCursos();
         mostrarAviso("Curso cadastrado com sucesso.");
     }
 
@@ -824,6 +1223,7 @@ function abrirFormularioInscricao(idCurso) {
         return;
     }
 
+    limparErrosFormulario(formularioInscricao);
     cursoIdInscricao.value = curso.id;
     cursoSelecionado.innerHTML = "";
 
@@ -863,10 +1263,51 @@ listaCursos.addEventListener("click", function(evento) {
 });
 
 function fecharFormularioInscricao() {
+    limparErrosFormulario(formularioInscricao);
     areaInscricao.hidden = true;
     cursoSelecionado.innerHTML = "";
     cursoIdInscricao.value = "";
 }
+
+telefoneInscricao.addEventListener("input", function(evento) {
+    const valor = telefoneInscricao.value;
+    const codigoPais = /^\s*\+55/.exec(valor);
+    const inicioNumero = codigoPais ? codigoPais[0].length : 0;
+    const digitos = valor.slice(inicioNumero).replace(/\D/g, "").slice(0, 11);
+    const ddd = digitos.slice(0, 2);
+    const corte = digitos.length === 11 ? 7 : 6;
+    const prefixo = digitos.slice(2, corte);
+    const sufixo = digitos.slice(corte);
+    let telefoneFormatado = ddd ? "(" + ddd : "";
+
+    if (prefixo) {
+        telefoneFormatado += ") " + prefixo;
+    }
+
+    if (sufixo) {
+        telefoneFormatado += "-" + sufixo;
+    }
+
+    if (valor === telefoneFormatado) {
+        return;
+    }
+
+    const cursor = telefoneInscricao.selectionStart;
+    telefoneInscricao.value = telefoneFormatado;
+
+    if (cursor !== null && cursor < valor.length) {
+        // Mantém o cursor junto ao mesmo dígito ao editar no meio do número.
+        const digitosAntesDoCursor = valor.slice(inicioNumero, cursor).replace(/\D/g, "").length;
+        const posicoesDosDigitos = Array.from(telefoneFormatado.matchAll(/\d/g));
+        const digitoAnterior = posicoesDosDigitos[digitosAntesDoCursor - 1];
+        const proximoDigito = posicoesDosDigitos[digitosAntesDoCursor];
+        let novaPosicao = digitoAnterior ? digitoAnterior.index + 1 : 0;
+        if (evento.inputType === "deleteContentForward" && proximoDigito) {
+            novaPosicao = proximoDigito.index;
+        }
+        telefoneInscricao.setSelectionRange(novaPosicao, novaPosicao);
+    }
+});
 
 botaoCancelarInscricao.addEventListener("click", function() {
     formularioInscricao.reset();
@@ -875,6 +1316,10 @@ botaoCancelarInscricao.addEventListener("click", function() {
 
 formularioInscricao.addEventListener("submit", function(evento) {
     evento.preventDefault();
+
+    if (!validarFormulario(formularioInscricao)) {
+        return;
+    }
 
     const idCurso = cursoIdInscricao.value;
     const cursos = lerCursos();
@@ -913,7 +1358,7 @@ formularioInscricao.addEventListener("submit", function(evento) {
         nome: document.getElementById("nomeCompleto").value.trim(),
         dataNascimento: document.getElementById("dataNascimento").value,
         email: email,
-        telefone: document.getElementById("telefoneInscricao").value.trim(),
+        telefone: telefoneInscricao.value.trim(),
         cidade: document.getElementById("cidadeInscricao").value.trim(),
         escolaridade: document.getElementById("escolaridadeInscricao").value,
         data: new Date().toISOString()
@@ -1027,7 +1472,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "40 horas",
                 requisitos: "Conhecimentos básicos de leitura",
                 local: "Aulas online",
-                imagem: "imagens/informatica.svg",
+                imagem: IMAGENS_CURSOS_DEMONSTRATIVOS["exemplo-informatica"],
                 data: agora
             },
             {
@@ -1041,7 +1486,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "60 horas",
                 requisitos: "A partir de 14 anos",
                 local: "Centro de formação EducaSim",
-                imagem: "imagens/administrativo.svg",
+                imagem: IMAGENS_CURSOS_DEMONSTRATIVOS["exemplo-administrativo"],
                 data: agora
             },
             {
@@ -1055,7 +1500,7 @@ function inserirCursosDemonstrativos() {
                 duracao: "32 horas",
                 requisitos: "Interesse em turismo e cultura",
                 local: "Aulas online",
-                imagem: "imagens/turismo.svg",
+                imagem: IMAGENS_CURSOS_DEMONSTRATIVOS["exemplo-turismo"],
                 data: agora
             },
             {
@@ -1069,15 +1514,21 @@ function inserirCursosDemonstrativos() {
                 duracao: "24 horas",
                 requisitos: "A partir de 14 anos",
                 local: "Unidade parceira EducaSim",
-                imagem: "imagens/saude.svg",
+                imagem: IMAGENS_CURSOS_DEMONSTRATIVOS["exemplo-saude"],
                 data: agora
             }
         ];
 
-        gravarCursos(cursosDemonstrativos);
+        if (!gravarCursos(cursosDemonstrativos)) {
+            return;
+        }
     }
 
-    localStorage.setItem(CHAVE_EXEMPLOS_CURSOS, "true");
+    try {
+        localStorage.setItem(CHAVE_EXEMPLOS_CURSOS, "true");
+    } catch (erro) {
+        // Os cursos disponíveis podem ser exibidos sem esta marca de inicialização.
+    }
 }
 
 function atualizarImagensDosExemplos() {
@@ -1087,7 +1538,7 @@ function atualizarImagensDosExemplos() {
     const cursosAtualizados = cursos.map(function(curso) {
         const imagem = IMAGENS_CURSOS_DEMONSTRATIVOS[curso.id];
 
-        if (imagem && curso.imagem !== imagem) {
+        if (imagem && (!curso.imagem || curso.imagem === imagem.replace(/\.png$/, ".svg"))) {
             alterou = true;
             return Object.assign({}, curso, { imagem: imagem });
         }
@@ -1113,33 +1564,27 @@ atualizarIndicadores();
 
 
 /* ==================================================
-   ABERTURA DO FORMULÁRIO ANIMADO
-   No desktop o CSS responde ao hover/foco; no celular o botão controla o painel.
+   ABERTURA DO FORMULÁRIO DE CURSO
    ================================================== */
 const botaoAbrirCadastro = document.getElementById("botaoAbrirCadastro");
 const painelCadastro = document.querySelector(".cadastro-painel");
+const superficieCadastro = document.getElementById("superficieCadastroCurso");
+const rotuloBotaoCadastro = botaoAbrirCadastro.querySelector(".cadastro-toggle-label");
 
+function definirCadastroAberto(aberto) {
+    if (!aberto && superficieCadastro.contains(document.activeElement)) {
+        botaoAbrirCadastro.focus({ preventScroll: true });
+    }
 
-/* Garante que o fechamento manual prevaleça enquanto o cursor permanece no painel. */
-if (botaoAbrirCadastro && painelCadastro) {
-    botaoAbrirCadastro.addEventListener("click", function() {
-        const estaAberto = painelCadastro.classList.contains("aberto");
-
-        if (estaAberto) {
-            painelCadastro.classList.remove("aberto");
-            painelCadastro.classList.add("fechado");
-            botaoAbrirCadastro.setAttribute("aria-expanded", "false");
-            botaoAbrirCadastro.querySelector(".cadastro-toggle-label").textContent = "Abrir formulário";
-            botaoAbrirCadastro.querySelector(".cadastro-toggle-icon").textContent = "＋";
-        } else {
-            painelCadastro.classList.remove("fechado");
-            painelCadastro.classList.add("aberto");
-            botaoAbrirCadastro.setAttribute("aria-expanded", "true");
-            botaoAbrirCadastro.querySelector(".cadastro-toggle-label").textContent = "Fechar formulário";
-            botaoAbrirCadastro.querySelector(".cadastro-toggle-icon").textContent = "×";
-        }
-    });
+    painelCadastro.classList.toggle("aberto", aberto);
+    superficieCadastro.inert = !aberto;
+    botaoAbrirCadastro.setAttribute("aria-expanded", String(aberto));
+    rotuloBotaoCadastro.textContent = aberto ? "Fechar formulário" : "Abrir formulário";
 }
+
+botaoAbrirCadastro.addEventListener("click", function() {
+    definirCadastroAberto(!painelCadastro.classList.contains("aberto"));
+});
 
 
 /* ==================================================
@@ -1188,5 +1633,39 @@ linksMenu.forEach(function(link) {
     });
 });
 
-window.addEventListener("scroll", atualizarLinkAtivo, { passive: true });
+// Um único listener de rolagem, executado no máximo uma vez por quadro.
+let rolagemPendente = false;
+
+function aoRolar() {
+    if (rolagemPendente) {
+        return;
+    }
+
+    rolagemPendente = true;
+
+    requestAnimationFrame(function() {
+        rolagemPendente = false;
+        atualizarNavbar();
+        atualizarLinkAtivo();
+    });
+}
+
+window.addEventListener("scroll", aoRolar, { passive: true });
 atualizarLinkAtivo();
+
+
+/* ==================================================
+   MENU MOBILE: AJUSTES EXTRAS
+   Fecha ao tocar fora do menu e ao voltar para tela grande.
+   ================================================== */
+document.addEventListener("click", function(evento) {
+    if (!menuPrincipal.classList.contains("aberto")) {
+        return;
+    }
+
+    if (menuPrincipal.contains(evento.target) || botaoMenu.contains(evento.target)) {
+        return;
+    }
+
+    fecharMenuMobile();
+});
