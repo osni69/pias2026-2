@@ -164,6 +164,39 @@
                 </div>
             </section>
 
+            <!-- Passo a passo para quem está chegando agora. -->
+            <section class="como-funciona" id="como-funciona" aria-labelledby="tituloComoFunciona">
+                <p class="etiqueta-secao">Passo a passo</p>
+
+                <h2 id="tituloComoFunciona">Como funciona</h2>
+
+                <ol class="passos">
+                    <li class="passo">
+                        <span class="passo-numero" aria-hidden="true">1</span>
+                        <div>
+                            <strong>Escolha um curso</strong>
+                            <span>Use a busca e os filtros para achar uma oportunidade que combine com você.</span>
+                        </div>
+                    </li>
+
+                    <li class="passo">
+                        <span class="passo-numero" aria-hidden="true">2</span>
+                        <div>
+                            <strong>Faça sua inscrição</strong>
+                            <span>Preencha o formulário rápido e, se quiser, fale direto com a instituição.</span>
+                        </div>
+                    </li>
+
+                    <li class="passo">
+                        <span class="passo-numero" aria-hidden="true">3</span>
+                        <div>
+                            <strong>Comece a aprender</strong>
+                            <span>Acompanhe a data de início e participe das aulas para construir seu futuro.</span>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+
             <!-- Área de cursos disponíveis. -->
             <section class="secao-cursos" id="cursos">
                 <div class="cabecalho-secao">
@@ -192,23 +225,35 @@
                         <div class="campo-filtro">
                             <label for="filtroCategoria">Categoria</label>
 
+                            <!-- As opções são criadas pelo JavaScript (lista CATEGORIAS). -->
                             <select id="filtroCategoria">
                                 <option value="">Todas as categorias</option>
-                                <option value="Administrativos">Administrativo</option>
-                                <option value="Informáticos">Informático</option>
-                                <option value="Turismo">Turismo</option>
-                                <option value="Saúde">Saúde</option>
                             </select>
                         </div>
 
                         <div class="campo-filtro">
                             <label for="filtroModalidade">Modalidade</label>
 
+                            <!-- As opções são criadas pelo JavaScript (lista MODALIDADES). -->
                             <select id="filtroModalidade">
                                 <option value="">Todas as modalidades</option>
-                                <option value="Online">Online</option>
-                                <option value="Híbrido">Híbrido</option>
                             </select>
+                        </div>
+
+                        <div class="campo-filtro">
+                            <label for="filtroCidade">Cidade</label>
+
+                            <!-- As cidades são criadas pelo JavaScript, a partir dos cursos. -->
+                            <select id="filtroCidade">
+                                <option value="">Todas as cidades</option>
+                            </select>
+                        </div>
+
+                        <div class="campo-filtro campo-filtro-gratuito">
+                            <label class="rotulo-gratuito" for="filtroGratuito">
+                                <input type="checkbox" id="filtroGratuito">
+                                Somente gratuitos
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -218,7 +263,7 @@
                 <!-- O JavaScript colocará os cartões dos cursos nesta área. -->
                 <div id="listaCursos">
                     <p class="mensagem-vazia">
-                        Nenhum curso disponível no momento.
+                        Carregando cursos...
                     </p>
                 </div>
             </section>
@@ -281,7 +326,7 @@
                         </div>
 
                         <small id="ajudaImagemCurso">
-                            Escolha uma imagem PNG, JPG ou WEBP. Este campo é opcional.
+                            Escolha uma imagem PNG, JPG ou WEBP de até 3 MB. Este campo é opcional.
                         </small>
 
                         <!-- O JavaScript mostrará a prévia da imagem aqui. -->
@@ -294,12 +339,9 @@
                             Categoria
                         </label>
 
+                        <!-- As opções são criadas pelo JavaScript (lista CATEGORIAS). -->
                         <select id="categoriaCurso" name="categoriaCurso" required>
                             <option value="">Selecione uma categoria</option>
-                            <option value="Administrativos">Administrativos</option>
-                            <option value="Informáticos">Informáticos</option>
-                            <option value="Turismo">Turismo</option>
-                            <option value="Saúde">Saúde</option>
                         </select>
                     </div>
 
@@ -331,9 +373,103 @@
                             required
                         >
                             <option value="">Selecione uma modalidade</option>
-                            <option value="Online">Online</option>
-                            <option value="Híbrido">Híbrido</option>
                         </select>
+                    </div>
+
+                    <!-- Instituição responsável pelo curso. -->
+                    <div class="campo">
+                        <label for="instituicaoCurso">Instituição</label>
+
+                        <input
+                            type="text"
+                            id="instituicaoCurso"
+                            name="instituicaoCurso"
+                            maxlength="100"
+                            placeholder="Nome da instituição que oferece o curso"
+                            required
+                        >
+                    </div>
+
+                    <!-- Cidade onde o curso acontece. -->
+                    <div class="campo">
+                        <label for="cidadeCurso">Cidade do curso</label>
+
+                        <input
+                            type="text"
+                            id="cidadeCurso"
+                            name="cidadeCurso"
+                            maxlength="80"
+                            placeholder="Exemplo: Foz do Iguaçu"
+                            required
+                        >
+                    </div>
+
+                    <!-- O curso é gratuito? -->
+                    <div class="campo">
+                        <label for="gratuitoCurso">O curso é gratuito?</label>
+
+                        <select id="gratuitoCurso" name="gratuitoCurso" required>
+                            <option value="">Selecione uma opção</option>
+                            <option value="sim">Sim, é gratuito</option>
+                            <option value="nao">Não, é pago</option>
+                        </select>
+                    </div>
+
+                    <!-- Faixa etária atendida. -->
+                    <div class="campo">
+                        <label for="faixaEtariaCurso">Faixa etária</label>
+
+                        <input
+                            type="text"
+                            id="faixaEtariaCurso"
+                            name="faixaEtariaCurso"
+                            maxlength="60"
+                            placeholder="Exemplo: 14 a 24 anos"
+                            required
+                        >
+                    </div>
+
+                    <!-- O curso entrega certificado? -->
+                    <div class="campo">
+                        <label for="certificadoCurso">Entrega certificado?</label>
+
+                        <select id="certificadoCurso" name="certificadoCurso" required>
+                            <option value="">Selecione uma opção</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+
+                    <!-- Data de início. -->
+                    <div class="campo">
+                        <label for="dataInicioCurso">Data de início</label>
+
+                        <input
+                            type="date"
+                            id="dataInicioCurso"
+                            name="dataInicioCurso"
+                            required
+                        >
+                    </div>
+
+                    <!-- Contato da instituição: WhatsApp ou e-mail. -->
+                    <div class="campo campo-largo">
+                        <label for="contatoCurso">Contato da instituição (WhatsApp ou e-mail)</label>
+
+                        <input
+                            type="text"
+                            id="contatoCurso"
+                            name="contatoCurso"
+                            maxlength="100"
+                            autocomplete="off"
+                            placeholder="(45) 99999-9999 ou contato@instituicao.com"
+                            aria-describedby="ajudaContatoCurso"
+                            required
+                        >
+
+                        <small id="ajudaContatoCurso">
+                            Os alunos usarão este contato para tirar dúvidas.
+                        </small>
                     </div>
 
                     <!-- Descrição do curso. -->
@@ -418,6 +554,10 @@
                             Cancelar edição
                         </button>
                     </div>
+
+                    <p class="aviso-moderacao" id="avisoModeracao">
+                        O curso aparece na lista quando o responsável aprovar.
+                    </p>
                             </form>
                         </div>
                     </div>
@@ -465,6 +605,12 @@
                             required
                         >
                     </div>
+
+                    <!-- Aviso que aparece quando a data de nascimento indica menos de 18 anos. -->
+                    <p class="aviso-menor campo-largo" id="avisoMenorIdade" role="status" hidden>
+                        Você tem menos de 18 anos. Antes de se inscrever, converse com um
+                        responsável e peça autorização.
+                    </p>
 
                     <!-- E-mail do participante. -->
                     <div class="campo">
@@ -575,6 +721,13 @@
                         Nenhuma inscrição realizada ainda.
                     </p>
                 </div>
+
+                <!-- Permite apagar todos os dados de inscrição salvos neste navegador. -->
+                <div class="acoes-inscricoes">
+                    <button type="button" class="botao-acao botao-apagar-inscricoes" id="botaoApagarInscricoes" hidden>
+                        Apagar todas as minhas inscrições
+                    </button>
+                </div>
             </section>
 
             <!-- Indicadores do projeto. -->
@@ -600,10 +753,49 @@
                     </div>
 
                     <div class="indicador">
-                        <strong id="indicadorCadastros">0</strong>
-                        <span>Cadastros em 8 semanas</span>
+                        <strong id="indicadorInstituicoes">0</strong>
+                        <span>Instituições parceiras</span>
                     </div>
                 </div>
+
+                <p class="nota-indicadores">
+                    Os números são calculados a partir dos cursos aprovados. "Instituições parceiras"
+                    é a quantidade de instituições diferentes que oferecem cursos na plataforma.
+                </p>
+            </section>
+
+            <!-- Área do responsável: aprovação de cursos novos (simulação). -->
+            <section class="secao-moderacao" id="moderacao" aria-labelledby="tituloModeracao" hidden>
+                <p class="etiqueta-secao">Área do responsável</p>
+
+                <h2 id="tituloModeracao">Moderação de cursos</h2>
+
+                
+                <!-- Formulário de senha. -->
+                <form id="formularioModeracao" class="formulario-moderacao" novalidate>
+                    <div class="campo">
+                        <label for="senhaModeracao">Senha do responsável</label>
+
+                        <input
+                            type="password"
+                            id="senhaModeracao"
+                            name="senhaModeracao"
+                            autocomplete="current-password" required
+                            aria-describedby="erroSenhaModeracao"
+                        >
+
+                        <p class="erro-campo" id="erroSenhaModeracao" role="alert" hidden></p>
+                    </div>
+
+                    <div class="acoes-formulario">
+                        <button type="submit">Entrar</button>
+
+                        <button type="button" class="botao-secundario" id="botaoFecharModeracao">
+                            Fechar
+                        </button>
+                    </div>
+                </form>
+
             </section>
         </div>
     </main>
@@ -614,7 +806,7 @@
 
         <div class="rodape-marca">
             <strong>EducaSim</strong>
-            <small>Pequenas empresas, grandes impactos.</small>
+            <small>Educação que abre portas para o futuro dos jovens.</small>
         </div>
 
 
@@ -637,7 +829,7 @@
         <div class="garotodeprograma">
             <div class="grt-card">
                 <a href="https://garotosdeprogama.onrender.com/">
-                    <img src="imagens/logo.png" alt="Garotos de Programa" width="640" height="640" loading="lazy">
+                    <img src="imagens/logo.png" alt="Garotos de Programação" width="640" height="640" loading="lazy">
                 </a>
             </div>
         </div>
@@ -646,12 +838,19 @@
     <div class="rodape-final">
         <small>&copy; 2026 EducaSim. Todos os direitos reservados.</small>
 
-        <!-- Insira os links legais quando houver destinos oficiais. -->
+        <nav id="links-rodape" class="rodape-links" aria-label="Links do rodapé">
+            <a href="privacidade.html">Política de privacidade</a>
+            <button type="button" class="botao-area-responsavel" id="botaoAbrirModeracao">
+                Área do responsável
+            </button>
+        </nav>
     </div>
 </footer>
 
 
     <!-- Conecta o HTML ao JavaScript. -->
+    <script type="application/json" id="catalogoInicial">[{"id": "exemplo-informatica", "titulo": "Introdução à Informática", "categoria": "Informático", "modalidade": "Online", "vagas": 20, "descricao": "Aprenda os fundamentos do computador, internet, editores de texto e ferramentas digitais para o dia a dia.", "conteudos": ["Uso do computador", "Internet e segurança digital", "Editores de texto", "E-mail e ferramentas online"], "duracao": "40 horas", "requisitos": "Conhecimentos básicos de leitura", "localOuLink": "Aulas online", "gratuito": true, "faixaEtaria": "14 a 29 anos", "cidade": "Foz do Iguaçu", "certificado": true, "dataInicio": "2027-02-08", "instituicao": "Centro de Formação EducaSim", "contato": "(45) 99952-6372", "imagem": "imagens/informatica.png", "data": "2026-11-01T12:00:00.000Z"}, {"id": "exemplo-administrativo", "titulo": "Auxiliar Administrativo", "categoria": "Administrativo", "modalidade": "Híbrido", "vagas": 15, "descricao": "Desenvolva habilidades de organização, atendimento, comunicação profissional e rotina de escritório.", "conteudos": ["Organização de documentos", "Atendimento ao público", "Comunicação profissional", "Rotinas administrativas"], "duracao": "60 horas", "requisitos": "A partir de 14 anos", "localOuLink": "Centro de formação EducaSim", "gratuito": true, "faixaEtaria": "a partir de 14 anos", "cidade": "Foz do Iguaçu", "certificado": true, "dataInicio": "2027-02-15", "instituicao": "Centro de Formação EducaSim", "contato": "educasim@gmail.com", "imagem": "imagens/administrativo.png", "data": "2026-11-01T12:00:00.000Z"}, {"id": "exemplo-turismo", "titulo": "Atendimento e Turismo Local", "categoria": "Turismo", "modalidade": "Online", "vagas": 18, "descricao": "Conheça práticas de atendimento, hospitalidade e divulgação das atrações turísticas da sua região.", "conteudos": ["Hospitalidade", "Atendimento ao visitante", "Cultura e turismo local", "Divulgação de destinos"], "duracao": "32 horas", "requisitos": "Interesse em turismo e cultura", "localOuLink": "Aulas online", "gratuito": true, "faixaEtaria": "15 a 29 anos", "cidade": "Foz do Iguaçu", "certificado": true, "dataInicio": "2027-03-01", "instituicao": "Associação Turismo e Futuro", "contato": "(45) 99952-6372", "imagem": "imagens/turismo.png", "data": "2026-11-01T12:00:00.000Z"}, {"id": "exemplo-saude", "titulo": "Primeiros Cuidados em Saúde", "categoria": "Saúde", "modalidade": "Híbrido", "vagas": 12, "descricao": "Aprenda noções de prevenção, autocuidado e primeiros cuidados em situações do cotidiano.", "conteudos": ["Prevenção de acidentes", "Sinais de alerta", "Noções de primeiros cuidados", "Autocuidado e bem-estar"], "duracao": "24 horas", "requisitos": "A partir de 14 anos", "localOuLink": "Unidade parceira EducaSim", "gratuito": true, "faixaEtaria": "a partir de 14 anos", "cidade": "Cascavel", "certificado": true, "dataInicio": "2027-03-08", "instituicao": "Unidade de Saúde Parceira", "contato": "educasim@gmail.com", "imagem": "imagens/saude.png", "data": "2026-11-01T12:00:00.000Z"}]</script>
+    <script src="acesso.js"></script>
     <script src="script.js"></script>
 </body>
 

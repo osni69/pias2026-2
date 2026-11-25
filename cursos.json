@@ -1,0 +1,108 @@
+{
+    "cursos": [
+        {
+            "id": "exemplo-informatica",
+            "titulo": "Introdução à Informática",
+            "categoria": "Informático",
+            "modalidade": "Online",
+            "vagas": 20,
+            "descricao": "Aprenda os fundamentos do computador, internet, editores de texto e ferramentas digitais para o dia a dia.",
+            "conteudos": [
+                "Uso do computador",
+                "Internet e segurança digital",
+                "Editores de texto",
+                "E-mail e ferramentas online"
+            ],
+            "duracao": "40 horas",
+            "requisitos": "Conhecimentos básicos de leitura",
+            "localOuLink": "Aulas online",
+            "gratuito": true,
+            "faixaEtaria": "14 a 29 anos",
+            "cidade": "Foz do Iguaçu",
+            "certificado": true,
+            "dataInicio": "2027-02-08",
+            "instituicao": "Centro de Formação EducaSim",
+            "contato": "(45) 99952-6372",
+            "imagem": "imagens/informatica.png",
+            "data": "2026-11-01T12:00:00.000Z"
+        },
+        {
+            "id": "exemplo-administrativo",
+            "titulo": "Auxiliar Administrativo",
+            "categoria": "Administrativo",
+            "modalidade": "Híbrido",
+            "vagas": 15,
+            "descricao": "Desenvolva habilidades de organização, atendimento, comunicação profissional e rotina de escritório.",
+            "conteudos": [
+                "Organização de documentos",
+                "Atendimento ao público",
+                "Comunicação profissional",
+                "Rotinas administrativas"
+            ],
+            "duracao": "60 horas",
+            "requisitos": "A partir de 14 anos",
+            "localOuLink": "Centro de formação EducaSim",
+            "gratuito": true,
+            "faixaEtaria": "a partir de 14 anos",
+            "cidade": "Foz do Iguaçu",
+            "certificado": true,
+            "dataInicio": "2027-02-15",
+            "instituicao": "Centro de Formação EducaSim",
+            "contato": "educasim@gmail.com",
+            "imagem": "imagens/administrativo.png",
+            "data": "2026-11-01T12:00:00.000Z"
+        },
+        {
+            "id": "exemplo-turismo",
+            "titulo": "Atendimento e Turismo Local",
+            "categoria": "Turismo",
+            "modalidade": "Online",
+            "vagas": 18,
+            "descricao": "Conheça práticas de atendimento, hospitalidade e divulgação das atrações turísticas da sua região.",
+            "conteudos": [
+                "Hospitalidade",
+                "Atendimento ao visitante",
+                "Cultura e turismo local",
+                "Divulgação de destinos"
+            ],
+            "duracao": "32 horas",
+            "requisitos": "Interesse em turismo e cultura",
+            "localOuLink": "Aulas online",
+            "gratuito": true,
+            "faixaEtaria": "15 a 29 anos",
+            "cidade": "Foz do Iguaçu",
+            "certificado": true,
+            "dataInicio": "2027-03-01",
+            "instituicao": "Associação Turismo e Futuro",
+            "contato": "(45) 99952-6372",
+            "imagem": "imagens/turismo.png",
+            "data": "2026-11-01T12:00:00.000Z"
+        },
+        {
+            "id": "exemplo-saude",
+            "titulo": "Primeiros Cuidados em Saúde",
+            "categoria": "Saúde",
+            "modalidade": "Híbrido",
+            "vagas": 12,
+            "descricao": "Aprenda noções de prevenção, autocuidado e primeiros cuidados em situações do cotidiano.",
+            "conteudos": [
+                "Prevenção de acidentes",
+                "Sinais de alerta",
+                "Noções de primeiros cuidados",
+                "Autocuidado e bem-estar"
+            ],
+            "duracao": "24 horas",
+            "requisitos": "A partir de 14 anos",
+            "localOuLink": "Unidade parceira EducaSim",
+            "gratuito": true,
+            "faixaEtaria": "a partir de 14 anos",
+            "cidade": "Cascavel",
+            "certificado": true,
+            "dataInicio": "2027-03-08",
+            "instituicao": "Unidade de Saúde Parceira",
+            "contato": "educasim@gmail.com",
+            "imagem": "imagens/saude.png",
+            "data": "2026-11-01T12:00:00.000Z"
+        }
+    ]
+}
